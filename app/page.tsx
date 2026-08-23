@@ -8,6 +8,7 @@ import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ThreeBackground from "@/components/ThreeBackground";
+import SnapAvatar from "@/components/SnapAvatar";
 
 export default function Home() {
   const [activeView, setActiveView] = useState("projects");
@@ -37,20 +38,27 @@ export default function Home() {
         {activeView === "projects" && (
           <div className="animate-fade-in-up">
             {/* Quick Greeting Header on Projects Landing */}
-            <div className="mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold mb-4 text-muted-foreground shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Available for New Projects & Freelancing
+            <div className="flex flex-col-reverse md:flex-row items-start md:items-center justify-between gap-6 mb-8 md:mb-12">
+              <div className="flex-grow max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold mb-4 text-muted-foreground shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Available for New Projects & Freelancing
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 text-foreground">
+                  Hi, I&apos;m{" "}
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-500">
+                    Javid Akeel
+                  </span>
+                </h1>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Flutter Developer & Full-Stack Engineer. Here is a deep-dive into key engineering challenges I have solved.
+                </p>
               </div>
-              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 text-foreground">
-                Hi, I&apos;m{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-500">
-                  Javid Akeel
-                </span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Flutter Developer & Full-Stack Engineer. Here is a deep-dive into key engineering challenges I have solved.
-              </p>
+
+              {/* Interactive 3D Parallax Snapchat Avatar */}
+              <div className="flex-shrink-0 self-center md:self-auto">
+                <SnapAvatar color={projectColor} />
+              </div>
             </div>
             
             {/* Carousel Projects component */}
