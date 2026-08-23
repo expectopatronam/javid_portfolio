@@ -126,13 +126,23 @@ const PROJECTS = [
   },
 ];
 
+// Expanded track array for infinite non-rewinding CarouselView looping
+const REPEAT_COUNT = 5;
+const EXPANDED_PROJECTS = Array.from({ length: REPEAT_COUNT }).flatMap(() => PROJECTS);
+const MID_OFFSET = Math.floor(REPEAT_COUNT / 2) * PROJECTS.length; // 10
+
 interface ProjectsProps {
   onColorChange?: (color: string) => void;
 }
 
 export default function Projects({ onColorChange }: ProjectsProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Virtual continuous slide index starting in the middle set (10)
+  const [virtualIndex, setVirtualIndex] = useState(MID_OFFSET);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+
+  // Active project index (0 to 4)
+  const currentIndex = ((virtualIndex % PROJECTS.length) + PROJECTS.length) % PROJECTS.length;
   const activeProject = PROJECTS[currentIndex];
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -143,25 +153,47 @@ export default function Projects({ onColorChange }: ProjectsProps) {
     }
   }, [currentIndex, onColorChange, activeProject.color]);
 
-  const navigateTo = (newIndex: number) => {
+  const navigateVirtual = (newVirtualIndex: number) => {
     if (isTransitioning) return;
     setIsTransitioning(true);
-    setCurrentIndex(newIndex);
-    setTimeout(() => setIsTransitioning(false), 600);
+    setVirtualIndex(newVirtualIndex);
+
+    // After animation completes, silently re-center virtualIndex to prevent infinite bounds
+    setTimeout(() => {
+      setIsTransitioning(false);
+      const targetProjIndex = ((newVirtualIndex % PROJECTS.length) + PROJECTS.length) % PROJECTS.length;
+      const normalizedVirtualIndex = MID_OFFSET + targetProjIndex;
+
+      if (newVirtualIndex !== normalizedVirtualIndex) {
+        setIsResetting(true);
+        setVirtualIndex(normalizedVirtualIndex);
+        // Turn transition back on after 1 frame
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setIsResetting(false);
+          });
+        });
+      }
+    }, 600);
   };
 
   const handlePrev = () => {
-    navigateTo(currentIndex === 0 ? PROJECTS.length - 1 : currentIndex - 1);
+    navigateVirtual(virtualIndex - 1);
   };
 
   const handleNext = () => {
-    navigateTo(currentIndex === PROJECTS.length - 1 ? 0 : currentIndex + 1);
+    navigateVirtual(virtualIndex + 1);
   };
 
-  // Math for Flutter CarouselView centering offset
-  // Card width = 76%, Gap/Margin = 2% on each side => 80% total stride per item
-  // Center alignment offset formula: 10% - (currentIndex * 80%)
-  const trackOffset = 10 - currentIndex * 80;
+  const jumpToProject = (targetIndex: number) => {
+    if (isTransitioning) return;
+    const diff = targetIndex - currentIndex;
+    navigateVirtual(virtualIndex + diff);
+  };
+
+  // Math for CarouselView track centering (80% step per item)
+  // Formula: 10% - (virtualIndex * 80%)
+  const trackOffset = 10 - virtualIndex * 80;
 
   return (
     <div
@@ -173,7 +205,7 @@ export default function Projects({ onColorChange }: ProjectsProps) {
         {PROJECTS.map((project, index) => (
           <button
             key={project.title}
-            onClick={() => !isTransitioning && navigateTo(index)}
+            onClick={() => jumpToProject(index)}
             className={`px-4.5 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
               currentIndex === index
                 ? "bg-accent text-accent-foreground shadow-sm"
@@ -185,7 +217,7 @@ export default function Projects({ onColorChange }: ProjectsProps) {
         ))}
       </div>
 
-      {/* 2. Main Flutter CarouselView Viewport Stage */}
+      {/* 2. Main CarouselView Viewport Stage */}
       <div className="relative w-full min-h-[560px] md:min-h-[620px] flex items-center justify-center my-4 overflow-hidden">
         {/* Floating Left Navigation Arrow */}
         <button
@@ -197,20 +229,22 @@ export default function Projects({ onColorChange }: ProjectsProps) {
           <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
         </button>
 
-        {/* Flutter CarouselView Sliding & Morphing Track */}
+        {/* CarouselView Infinite Track */}
         <div
-          className="flex items-center w-full transition-transform duration-600 ease-[cubic-bezier(0.2,0,0,1)]"
+          className={`flex items-center w-full ${
+            isResetting ? "transition-none" : "transition-transform duration-600 ease-[cubic-bezier(0.2,0,0,1)]"
+          }`}
           style={{
             transform: `translateX(${trackOffset}%)`,
           }}
         >
-          {PROJECTS.map((project, index) => {
-            const isActive = index === currentIndex;
+          {EXPANDED_PROJECTS.map((project, index) => {
+            const isActive = index === virtualIndex;
 
             return (
               <div
-                key={project.title}
-                onClick={() => !isActive && !isTransitioning && navigateTo(index)}
+                key={`${project.title}-${index}`}
+                onClick={() => !isActive && !isTransitioning && navigateVirtual(index)}
                 className={`flex-shrink-0 w-[76%] mx-[2%] p-6 md:p-10 rounded-3xl transition-all duration-600 ease-[cubic-bezier(0.2,0,0,1)] select-none ${
                   isActive
                     ? "opacity-100 border border-accent/40 bg-card/90 dark:bg-card/95 backdrop-blur-xl shadow-2xl scale-100 cursor-default z-30"
@@ -349,7 +383,7 @@ export default function Projects({ onColorChange }: ProjectsProps) {
         {PROJECTS.map((_, index) => (
           <button
             key={index}
-            onClick={() => !isTransitioning && navigateTo(index)}
+            onClick={() => jumpToProject(index)}
             className={`h-2.5 rounded-full transition-all cursor-pointer ${
               currentIndex === index ? "w-10 bg-accent" : "w-2.5 bg-muted/40 hover:bg-muted/60"
             }`}
