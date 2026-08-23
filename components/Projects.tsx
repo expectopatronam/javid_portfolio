@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ExternalLink, Globe, Smartphone, Lightbulb, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Globe, Smartphone, Lightbulb, TrendingUp, ChevronLeft, ChevronRight, Info } from "lucide-react";
 
 const PROJECTS = [
   {
@@ -10,7 +10,8 @@ const PROJECTS = [
     category: "Mobile (AI & Social)",
     platform: "Android & iOS",
     color: "#6366f1", // Indigo
-    description: "An AI-powered cartoon creation and social media mobile application built for high-engagement feeds.",
+    description: "AI-based video creation and social media app.",
+    summary: "Selfitoons is an AI-based video creation and social media app. You can create custom AI videos with a single selfie image and video prompt.",
     tech: ["Flutter", "Dart", "Riverpod", "Hive", "FFmpeg", "GoRouter", "Razorpay", "Cashfree"],
     links: [
       {
@@ -47,7 +48,8 @@ const PROJECTS = [
     category: "Full-Stack FinTech",
     platform: "Web & Mobile",
     color: "#10b981", // Emerald
-    description: "Accounting and GST compliance platform serving retail merchants and business managers.",
+    description: "Full-stack GST accounting & stock management platform built from scratch.",
+    summary: "For Ubill, I mastered GST compliance, accounting principles, stock management, and journal entries, building the entire full-stack business logic completely from scratch.",
     tech: ["Flutter Web", "Node.js", "MongoDB", "GetX", "Hive", "JS Interop"],
     links: [
       {
@@ -69,8 +71,9 @@ const PROJECTS = [
     category: "Mobile (POS & Inventory)",
     platform: "Android",
     color: "#f59e0b", // Amber
-    description: "Point-of-Sale billing and inventory system tailored for small businesses.",
-    tech: ["Kotlin", "Jetpack Compose", "Django", "Firebase RTDB", "RoomDB", "GCP"],
+    description: "Offline-first POS & inventory platform with delta sync & GCP microservices.",
+    summary: "Bizstack is an offline-first POS and inventory app featuring delta sync. I architected the complete application, utilizing Python with Google Cloud Services for backend microservices and Firebase for real-time database management.",
+    tech: ["Kotlin", "Jetpack Compose", "Python", "GCP Microservices", "Firebase RTDB", "RoomDB"],
     links: [
       {
         label: "PlayStore",
@@ -81,7 +84,7 @@ const PROJECTS = [
     cases: [
       {
         problem: "Merchant locations frequently suffer from unstable cellular and internet connectivity, causing system latency or offline failures that directly halt transactions, leading to lost sales and desynchronized inventory records.",
-        solution: "I architected an offline-first data layer using Android's RoomDB and SQLite. All transaction entries commit locally instantly. An automated background synchronization queue runs on a background worker to poll network states, batch unsynced payloads, handle sync conflicts on the Django backend, and push real-time updates to Firebase RTDB once online.",
+        solution: "I architected an offline-first data layer with delta synchronization using Android's RoomDB and SQLite. All transaction entries commit locally instantly. An automated background synchronization engine polls network states, batching unsynced delta payloads to Python microservices deployed on Google Cloud Services and pushing real-time sync updates to Firebase RTDB once online.",
         impact: "Achieved 100% checkout uptime for 1,000+ active retail merchants, securing all transaction history against network failures."
       }
     ]
@@ -91,7 +94,8 @@ const PROJECTS = [
     category: "Mobile (Education)",
     platform: "Android",
     color: "#06b6d4", // Cyan
-    description: "Study and quiz preparation utility for marine engineering candidates.",
+    description: "Study and quiz utility for marine engineering candidates.",
+    summary: "Engine Room Ninja is a secure marine engineering study and quiz app providing offshore candidates with encrypted video lessons and preparation materials.",
     tech: ["Flutter", "Express.js", "MongoDB", "AWS S3", "Docker"],
     links: [
       {
@@ -113,7 +117,8 @@ const PROJECTS = [
     category: "Cloud Admin Platform",
     platform: "Web",
     color: "#ec4899", // Rose
-    description: "Property and listing administration dashboard for real-estate managers.",
+    description: "Property administration dashboard for real-estate managers.",
+    summary: "InvusProp is a cloud property administration platform built for real-estate managers to handle listings, tenant records, and enterprise RBAC security.",
     tech: ["Next.js", "NestJS", "Tailwind CSS", "AWS Cognito", "Docker", "Terraform"],
     links: [],
     cases: [
@@ -306,6 +311,19 @@ export default function Projects({ onColorChange }: ProjectsProps) {
                       ))}
                     </div>
                   )}
+                </div>
+
+                {/* Dedicated Project Overview Callout */}
+                <div className="mb-6 p-4 rounded-2xl bg-accent/5 border-l-4 border-accent/70 flex items-start gap-3">
+                  <Info className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-accent mb-0.5 block">
+                      Project Overview & Summary
+                    </span>
+                    <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
+                      {project.summary}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Case Studies Content */}
