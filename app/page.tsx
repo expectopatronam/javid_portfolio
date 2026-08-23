@@ -9,10 +9,14 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ThreeBackground from "@/components/ThreeBackground";
 import SnapAvatar from "@/components/SnapAvatar";
+import { useScreenType } from "@/hooks/useScreenType";
 
 export default function Home() {
   const [activeView, setActiveView] = useState("projects");
   const [projectColor, setProjectColor] = useState("#6366f1");
+
+  // Initialize client-side screen layout classifiers
+  useScreenType();
 
   // Handle page state change, resetting accent color to Indigo if navigating away from projects
   const handleViewChange = (view: string) => {

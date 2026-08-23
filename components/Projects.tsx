@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ExternalLink, Globe, Smartphone, AlertTriangle, Lightbulb, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ExternalLink, Globe, Smartphone, Lightbulb, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PROJECTS = [
   {
@@ -11,9 +11,6 @@ const PROJECTS = [
     platform: "Android & iOS",
     color: "#6366f1", // Indigo
     description: "An AI-powered cartoon creation and social media mobile application built for high-engagement feeds.",
-    problem: "When launching the social feed, low-end Android devices immediately began crashing. The root cause was Android's strict hardware decoder limits: instantiating multiple concurrent video players to enable smooth scrolling exhausted device decoder resources. Furthermore, storing separate watermarked and unwatermarked video copies on the cloud for free vs. premium tiers bloated our storage costs and doubled server encoding times.",
-    solution: "I ported the watermarking algorithm directly to the client devices by compiling and linking FFmpeg binaries within the Flutter build. This allowed us to dynamically overlay watermarks on-the-fly for free users. To fix the system crashes, I designed a custom Video Controller Pool Manager that caps active video players to a pool of exactly 5. As a video scrolls off-screen, its controller is recycled and reset. I implemented visibility detection to play only the active video, and preloaded adjacent videos in feed order to keep scroll latency at zero. Finally, I integrated Hive to cache feed data locally for instant startup loading.",
-    impact: "Reduced cloud video storage and encoding overhead by 75% overnight. Eliminated all video decoder-related crashes on Android devices, maintained a consistent 60fps feed scrolling experience, and achieved sub-second initial feed loads.",
     tech: ["Flutter", "Dart", "Riverpod", "Hive", "FFmpeg", "GoRouter", "Razorpay", "Cashfree"],
     links: [
       {
@@ -27,6 +24,23 @@ const PROJECTS = [
         icon: <Smartphone className="w-4 h-4" />,
       },
     ],
+    cases: [
+      {
+        problem: "We were storing and encoding two separate copies (watermarked and unwatermarked) of every generated video on our backend server, bloating cloud storage costs and doubling encoding latency.",
+        solution: "I shifted the watermarking logic completely to the client side. By compiling and linking FFmpeg binaries within the mobile build, the frontend now overlays watermarks on-the-fly for free-tier users directly on their devices, requesting a single clean source video from the backend.",
+        impact: "Slashed cloud storage and encoding processing costs by 75% overnight and eliminated double-encoding latency on the server."
+      },
+      {
+        problem: "High-bitrate video feeds crashed the application on Android due to the system's strict hardware limit of exactly 5 concurrent active video decoders during infinite scrolling.",
+        solution: "I designed a custom Video Controller Pool Manager that strictly caps active controllers to a pool of 5. When a video scrolls off-screen, its controller is recycled, reset, and re-assigned to the next video. I implemented visibility detection to play only the active video and preloaded adjacent items in feed order.",
+        impact: "Eliminated 100% of decoder-related crashes on low-end Android devices while achieving smooth, zero-latency 60fps scrolling."
+      },
+      {
+        problem: "Users experienced a sluggish initial startup while waiting for remote API requests to fetch feed media metadata on app launch.",
+        solution: "I implemented Hive local database caching. The initial feed payload is stored locally and rendered immediately on launch, while remote API synchronization updates the cache silently in the background.",
+        impact: "Achieved sub-second initial feed loads, improving user retention and startup responsiveness."
+      }
+    ]
   },
   {
     title: "Ubill",
@@ -34,9 +48,6 @@ const PROJECTS = [
     platform: "Web & Mobile",
     color: "#10b981", // Emerald
     description: "Accounting and GST compliance platform serving retail merchants and business managers.",
-    problem: "Re-coding complex government-compliant tax invoice layouts into native Flutter widgets resulted in design drift between backends and frontends. Minor template tweaks required multi-codebase edits. Additionally, compiling and rendering PDFs inside the Flutter Web build was slow, leading to frozen UI threads during customer checkouts.",
-    solution: "Instead of rewriting HTML/CSS templates in Flutter code, I built a JavaScript Interop bridge. This allowed our Flutter Web client to directly interface with native browser printing engines and HTML canvas APIs. We reuse the exact backend HTML templates, rendering them inside a hidden iframe and compiling the output directly to a PDF without blocking the main rendering thread.",
-    impact: "Boosted PDF invoice generation speed by 50% with zero UI thread blockages. Eliminated code duplication, ensuring that 100% of frontend-generated customer invoices matched backend receipts with zero layout drift.",
     tech: ["Flutter Web", "Node.js", "MongoDB", "GetX", "Hive", "JS Interop"],
     links: [
       {
@@ -45,6 +56,13 @@ const PROJECTS = [
         icon: <Globe className="w-4 h-4" />,
       },
     ],
+    cases: [
+      {
+        problem: "Coding complex government-compliant GST invoice layouts into native Flutter widgets caused double-maintenance of styling code across frontends and backends. Additionally, rendering PDFs in Flutter Web was slow, freezing the UI thread at checkout.",
+        solution: "I built a JavaScript Interop bridge allowing the Flutter Web client to call native browser printing engines and HTML canvas APIs. We reuse the exact HTML/CSS templates from the backend, rendering them inside a hidden iframe and compiling the output directly to a PDF without blocking the main thread.",
+        impact: "Boosted PDF generation speeds by 50% with zero UI thread blockages and eliminated frontend-backend layout discrepancies."
+      }
+    ]
   },
   {
     title: "Bizstack",
@@ -52,9 +70,6 @@ const PROJECTS = [
     platform: "Android",
     color: "#f59e0b", // Amber
     description: "Point-of-Sale billing and inventory system tailored for small businesses.",
-    problem: "Merchants operate in retail locations with highly unstable cellular connectivity. Any network latency or offline failure directly halts transactions, leading to lost sales, long checkout lines, and desynchronized inventory records across devices.",
-    solution: "I architected an offline-first data layer using Android's RoomDB and SQLite. Every transaction, invoice creation, and inventory count is committed locally instantly. An automated synchronization queue runs on a background worker to poll network states, batch unsynced payloads, handle sync conflicts on the Django backend, and push real-time updates to Firebase Realtime Database once online.",
-    impact: "Achieved 100% checkout uptime for 1,000+ active retail merchants, preventing transaction losses during critical outages with a self-healing sync engine.",
     tech: ["Kotlin", "Jetpack Compose", "Django", "Firebase RTDB", "RoomDB", "GCP"],
     links: [
       {
@@ -63,6 +78,13 @@ const PROJECTS = [
         icon: <Smartphone className="w-4 h-4" />,
       },
     ],
+    cases: [
+      {
+        problem: "Merchant locations frequently suffer from unstable cellular and internet connectivity, causing system latency or offline failures that directly halt transactions, leading to lost sales and desynchronized inventory records.",
+        solution: "I architected an offline-first data layer using Android's RoomDB and SQLite. All transaction entries commit locally instantly. An automated background synchronization queue runs on a background worker to poll network states, batch unsynced payloads, handle sync conflicts on the Django backend, and push real-time updates to Firebase RTDB once online.",
+        impact: "Achieved 100% checkout uptime for 1,000+ active retail merchants, securing all transaction history against network failures."
+      }
+    ]
   },
   {
     title: "Engine Room Ninja",
@@ -70,9 +92,6 @@ const PROJECTS = [
     platform: "Android",
     color: "#06b6d4", // Cyan
     description: "Study and quiz preparation utility for marine engineering candidates.",
-    problem: "Distributing high-definition video lessons and interactive study assets to offshore engineers required a secure, rapid-delivery media model. Manual content releases and unorganized media assets created high operational overhead.",
-    solution: "I dockerized the Node.js / Express backend to simplify scaling. I integrated AWS S3 to store study materials, generating secure, short-lived pre-signed URLs on-demand to protect copyrighted study lessons, and cached assets via CloudFront CDNs.",
-    impact: "Standardized build and deploy pipelines to under 5 minutes. Optimized video retrieval times by 40% and prevented unauthorized sharing of copyrighted media.",
     tech: ["Flutter", "Express.js", "MongoDB", "AWS S3", "Docker"],
     links: [
       {
@@ -81,6 +100,13 @@ const PROJECTS = [
         icon: <Smartphone className="w-4 h-4" />,
       },
     ],
+    cases: [
+      {
+        problem: "Delivering high-definition study assets securely to offshore engineers while preventing unauthorized sharing of copyrighted video files. Manual content deployments also caused high operational overhead.",
+        solution: "I dockerized the Node.js / Express backend to simplify scaling. I integrated AWS S3 to store study materials, generating secure, short-lived pre-signed URLs on-demand to protect media and cached assets via CloudFront CDNs.",
+        impact: "Standardized deployment pipelines to under 5 minutes, reduced media latency by 40%, and secured copyrighted assets."
+      }
+    ]
   },
   {
     title: "InvusProp Admin Panel",
@@ -88,11 +114,15 @@ const PROJECTS = [
     platform: "Web",
     color: "#ec4899", // Rose
     description: "Property and listing administration dashboard for real-estate managers.",
-    problem: "Dealing with sensitive property transactions and confidential seller contracts required strict security permissions. Storing role configurations in client-side code was insecure, and query authorization on database levels caused API bottlenecks.",
-    solution: "I integrated AWS Cognito user pools for enterprise SSO and multi-factor auth. I configured custom user role claims that are encrypted inside JWT tokens, which are parsed and validated at the edge using Next.js middleware, blocking unauthorized route rendering before it hits the backend.",
-    impact: "Created an enterprise-grade administrative portal with secure access controls and automated audit logs, reducing unauthorized API attempts to zero.",
     tech: ["Next.js", "NestJS", "Tailwind CSS", "AWS Cognito", "Docker", "Terraform"],
     links: [],
+    cases: [
+      {
+        problem: "Dealing with sensitive property transactions required strict permission controls. Client-side configurations were insecure, and query authorization checks on the database caused API bottlenecks.",
+        solution: "I integrated AWS Cognito user pools for enterprise SSO and multi-factor auth. I configured custom user role claims encrypted inside JWT tokens, which are parsed and validated at the edge using Next.js middleware, blocking unauthorized route rendering before it hits the backend.",
+        impact: "Secured administrative dashboards with automated audit logs and fine-grained visual controls, reducing unauthorized API attempts to zero."
+      }
+    ]
   },
 ];
 
@@ -103,6 +133,27 @@ interface ProjectsProps {
 export default function Projects({ onColorChange }: ProjectsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const activeProject = PROJECTS[currentIndex];
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Parallax mouse movements (pure CSS variable updates for peak GPU performance)
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+      const { clientX, clientY } = event;
+      const { innerWidth, innerHeight } = window;
+      
+      const x = (clientX / innerWidth) - 0.5;
+      const y = (clientY / innerHeight) - 0.5;
+
+      containerRef.current.style.setProperty("--mx", `${x}`);
+      containerRef.current.style.setProperty("--my", `${y}`);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   // Notify parent component about color changes to adjust the global theme
   useEffect(() => {
@@ -120,14 +171,17 @@ export default function Projects({ onColorChange }: ProjectsProps) {
   };
 
   return (
-    <div className="w-full relative py-6 max-w-5xl mx-auto overflow-x-clip">
+    <div
+      ref={containerRef}
+      className="w-full relative py-6 max-w-5xl mx-auto overflow-x-clip [--mx:0] [--my:0]"
+    >
       {/* 1. Horizontal jump-tabs navigation */}
-      <div className="flex flex-wrap gap-2 mb-8 justify-center border-b border-border/20 pb-4">
+      <div className="flex flex-wrap gap-2.5 mb-8 justify-center border-b border-border/20 pb-4">
         {PROJECTS.map((project, index) => (
           <button
             key={project.title}
             onClick={() => setCurrentIndex(index)}
-            className={`px-4 py-2 text-xs md:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
+            className={`px-4.5 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
               currentIndex === index
                 ? "bg-accent text-accent-foreground shadow-sm"
                 : "bg-muted/10 hover:bg-muted/20 text-muted-foreground hover:text-foreground"
@@ -138,7 +192,7 @@ export default function Projects({ onColorChange }: ProjectsProps) {
         ))}
       </div>
 
-      {/* 2. Main Carousel Slider Shell (Transparent wrapper, letting background show through) */}
+      {/* 2. Main Carousel Slider Shell (Transparent wrapper) */}
       <div className="relative flex items-center w-full">
         {/* Floating Left Arrow (Desktop only) */}
         <button
@@ -156,7 +210,6 @@ export default function Projects({ onColorChange }: ProjectsProps) {
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {PROJECTS.map((project, index) => {
-              // Calculate slide difference for parallax calculations
               const diff = index - currentIndex;
 
               return (
@@ -185,18 +238,18 @@ export default function Projects({ onColorChange }: ProjectsProps) {
                           <img
                             src={project.logo}
                             alt={project.title}
-                            className="w-12 h-12 rounded-xl object-cover border border-border/50 shadow-sm"
+                            className="w-14 h-14 rounded-xl object-cover border border-border/50 shadow-sm"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 flex items-center justify-center font-bold text-accent text-lg shadow-sm">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 flex items-center justify-center font-bold text-accent text-xl shadow-sm">
                             {project.title[0]}
                           </div>
                         )}
                         <div>
-                          <h3 className="text-3xl font-extrabold text-foreground tracking-tight">
+                          <h3 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
                             {project.title}
                           </h3>
-                          <p className="text-sm text-muted-foreground mt-0.5">
+                          <p className="text-base text-muted-foreground mt-1">
                             {project.description}
                           </p>
                         </div>
@@ -223,55 +276,56 @@ export default function Projects({ onColorChange }: ProjectsProps) {
                     )}
                   </div>
 
-                  {/* Case study body (Transparent borders, floating text with horizontal parallax offsets) */}
-                  <div className="space-y-8">
-                    {/* Challenge (Parallax level 2) */}
-                    <div
-                      className="pl-6 border-l-2 border-amber-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
-                      style={{
-                        transform: `translateX(${diff * 40}px)`,
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5 font-bold text-amber-600 dark:text-amber-500 text-sm uppercase tracking-wider">
-                        <AlertTriangle className="w-4 h-4" />
-                        01. The Challenge & Background
-                      </div>
-                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                        {project.problem}
-                      </p>
-                    </div>
+                  {/* Narrative Case Studies list (Floating text with horizontal parallax offsets) */}
+                  <div className="space-y-12">
+                    {project.cases.map((c, cIndex) => {
+                      const parallaxOffset = diff * (30 + cIndex * 20);
 
-                    {/* Solution (Parallax level 3) */}
-                    <div
-                      className="pl-6 border-l-2 border-blue-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
-                      style={{
-                        transform: `translateX(${diff * 60}px)`,
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5 font-bold text-blue-600 dark:text-blue-500 text-sm uppercase tracking-wider">
-                        <Lightbulb className="w-4 h-4" />
-                        02. The Engineering Journey & Architecture
-                      </div>
-                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                        {project.solution}
-                      </p>
-                    </div>
+                      return (
+                        <div
+                          key={cIndex}
+                          className="flex flex-col gap-6 transition-transform duration-700 ease-out border-b border-border/10 pb-8 last:border-b-0 last:pb-0"
+                          style={{
+                            transform: `translateX(${parallaxOffset}px)`,
+                          }}
+                        >
+                          {/* Large Problem/Challenge Header */}
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
+                              The Challenge & Context
+                            </span>
+                            <h4 className="text-2xl md:text-3xl font-extrabold text-foreground leading-snug tracking-tight">
+                              {c.problem}
+                            </h4>
+                          </div>
 
-                    {/* Impact (Parallax level 4) */}
-                    <div
-                      className="pl-6 border-l-2 border-emerald-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
-                      style={{
-                        transform: `translateX(${diff * 80}px)`,
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5 font-bold text-emerald-600 dark:text-emerald-500 text-sm uppercase tracking-wider">
-                        <TrendingUp className="w-4 h-4" />
-                        03. The Outcome & Business Impact
-                      </div>
-                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                        {project.impact}
-                      </p>
-                    </div>
+                          {/* Details Grid (Solution & Impact columns) */}
+                          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pl-10">
+                            {/* Solution */}
+                            <div className="md:col-span-7 flex flex-col gap-2">
+                              <span className="text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-500 flex items-center gap-1.5">
+                                <Lightbulb className="w-4 h-4" />
+                                Engineering Solution
+                              </span>
+                              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                                {c.solution}
+                              </p>
+                            </div>
+
+                            {/* Impact */}
+                            <div className="md:col-span-5 flex flex-col gap-2">
+                              <span className="text-sm font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5">
+                                <TrendingUp className="w-4 h-4" />
+                                Impact & Metrics
+                              </span>
+                              <p className="text-base md:text-lg text-muted-foreground leading-relaxed font-bold">
+                                {c.impact}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Footer Tech stack (Parallax level 1) */}
@@ -281,11 +335,11 @@ export default function Projects({ onColorChange }: ProjectsProps) {
                       transform: `translateX(${diff * 20}px)`,
                     }}
                   >
-                    <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
+                    <span className="text-sm font-bold text-muted uppercase tracking-wider mr-3">Technologies Used:</span>
                     {project.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-3 py-1 rounded bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
+                        className="px-3.5 py-1.5 rounded-xl bg-muted/10 text-xs md:text-sm font-semibold text-muted border border-border/10 shadow-sm"
                       >
                         {t}
                       </span>
@@ -324,13 +378,13 @@ export default function Projects({ onColorChange }: ProjectsProps) {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
-                currentIndex === index ? "w-8 bg-accent" : "w-2 bg-muted/40 hover:bg-muted/60"
+              className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                currentIndex === index ? "w-10 bg-accent" : "w-2.5 bg-muted/40 hover:bg-muted/60"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-          <span className="text-xs text-muted-foreground font-semibold ml-2">
+          <span className="text-xs md:text-sm text-muted-foreground font-semibold ml-2">
             {currentIndex + 1} of {PROJECTS.length}
           </span>
         </div>

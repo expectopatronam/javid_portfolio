@@ -93,3 +93,43 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
 }
+
+/* Screen Adaptivity Rules (Dynamic width scaling based on device type & aspect ratio) */
+
+/* 1. Large Screen Horizontal Space Expansion */
+.screen-desktop main,
+.screen-desktop .max-w-6xl {
+  max-width: 86rem; /* 1376px - extremely spacious layout */
+}
+.screen-desktop .max-w-5xl {
+  max-width: 78rem; /* 1248px for project sliders */
+}
+
+.screen-laptop main,
+.screen-laptop .max-w-6xl {
+  max-width: 76rem; /* 1216px */
+}
+.screen-laptop .max-w-5xl {
+  max-width: 68rem; /* 1088px */
+}
+
+/* 2. Narrow Aspect Ratio (4:3) Optimizations (iPad classic / square displays) */
+.ratio-4-3 main {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.ratio-4-3 .gap-8 {
+  gap: 1.5rem;
+}
+.ratio-4-3 h4.text-2xl,
+.ratio-4-3 h4.text-3xl {
+  font-size: 1.5rem; /* scale down header fonts to fit shorter screens */
+}
+
+/* 3. Widescreen 16:9 vertical positioning centering */
+.ratio-16-9 main {
+  min-height: 80vh;
+}
+
