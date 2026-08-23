@@ -34,6 +34,14 @@ export default function Home() {
       {/* Global Interactive 3D Background (Smoothly color-shifting) */}
       <ThreeBackground color={projectColor} />
 
+      {/* Dynamic Ambient Blur Glow (Subtle atmospheric color wash) */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full blur-[160px] opacity-[0.04] dark:opacity-[0.07] transition-all duration-1000 ease-in-out pointer-events-none -z-10"
+        style={{
+          background: `radial-gradient(circle, ${projectColor} 0%, transparent 70%)`
+        }}
+      />
+
       {/* Navigation */}
       <Navbar activeView={activeView} onViewChange={handleViewChange} />
 
