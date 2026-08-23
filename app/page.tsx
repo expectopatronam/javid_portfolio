@@ -1,22 +1,71 @@
+"use client";
+
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
+import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
 import Experience from "@/components/Experience";
-import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import ThreeBackground from "@/components/ThreeBackground";
 
 export default function Home() {
+  const [activeView, setActiveView] = useState("projects");
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow">
-        <Hero />
-        <Skills />
-        <Experience />
-        <Projects />
-        <Contact />
+    <div className="flex flex-col min-h-screen relative">
+      {/* Global Interactive 3D Background */}
+      <ThreeBackground />
+
+      {/* Navigation */}
+      <Navbar activeView={activeView} onViewChange={setActiveView} />
+
+      {/* Main Switcher Content */}
+      <main className="flex-grow flex flex-col justify-center w-full max-w-6xl mx-auto px-6 py-12 md:py-16 z-10 animate-fade-in">
+        {activeView === "projects" && (
+          <div className="animate-fade-in-up">
+            {/* Quick Greeting Header on Projects Landing */}
+            <div className="mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-semibold mb-4 text-muted-foreground shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Available for New Projects & Freelancing
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 text-foreground">
+                Hi, I&apos;m{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-500">
+                  Javid Akeel
+                </span>
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
+                Flutter Developer & Full-Stack Engineer. Here is a deep-dive into key engineering challenges I have solved.
+              </p>
+            </div>
+            
+            {/* Carousel Projects component */}
+            <Projects />
+          </div>
+        )}
+
+        {activeView === "skills" && (
+          <div className="animate-fade-in-up">
+            <Skills />
+          </div>
+        )}
+
+        {activeView === "experience" && (
+          <div className="animate-fade-in-up">
+            <Experience />
+          </div>
+        )}
+
+        {activeView === "contact" && (
+          <div className="animate-fade-in-up">
+            <Contact />
+          </div>
+        )}
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
