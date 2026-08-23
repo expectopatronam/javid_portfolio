@@ -109,7 +109,7 @@ const PROJECTS = [
     ]
   },
   {
-    title: "InvusProp Admin Panel",
+    title: "InvusProp",
     category: "Cloud Admin Platform",
     platform: "Web",
     color: "#ec4899", // Rose
@@ -132,55 +132,48 @@ interface ProjectsProps {
 
 export default function Projects({ onColorChange }: ProjectsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const activeProject = PROJECTS[currentIndex];
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Parallax mouse movements (pure CSS variable updates for peak GPU performance)
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { clientX, clientY } = event;
-      const { innerWidth, innerHeight } = window;
-      
-      const x = (clientX / innerWidth) - 0.5;
-      const y = (clientY / innerHeight) - 0.5;
-
-      containerRef.current.style.setProperty("--mx", `${x}`);
-      containerRef.current.style.setProperty("--my", `${y}`);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
-
-  // Notify parent component about color changes to adjust the global theme
+  // Notify parent component about active project color
   useEffect(() => {
     if (onColorChange) {
       onColorChange(activeProject.color);
     }
   }, [currentIndex, onColorChange, activeProject.color]);
 
+  const navigateTo = (newIndex: number) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex(newIndex);
+    setTimeout(() => setIsTransitioning(false), 600);
+  };
+
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? PROJECTS.length - 1 : prev - 1));
+    navigateTo(currentIndex === 0 ? PROJECTS.length - 1 : currentIndex - 1);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === PROJECTS.length - 1 ? 0 : prev + 1));
+    navigateTo(currentIndex === PROJECTS.length - 1 ? 0 : currentIndex + 1);
   };
+
+  // Math for Flutter CarouselView centering offset
+  // Card width = 76%, Gap/Margin = 2% on each side => 80% total stride per item
+  // Center alignment offset formula: 10% - (currentIndex * 80%)
+  const trackOffset = 10 - currentIndex * 80;
 
   return (
     <div
       ref={containerRef}
-      className="w-full relative py-6 max-w-5xl mx-auto overflow-x-clip [--mx:0] [--my:0]"
+      className="w-full relative py-6 max-w-6xl mx-auto overflow-x-clip"
     >
       {/* 1. Horizontal jump-tabs navigation */}
       <div className="flex flex-wrap gap-2.5 mb-8 justify-center border-b border-border/20 pb-4">
         {PROJECTS.map((project, index) => (
           <button
             key={project.title}
-            onClick={() => setCurrentIndex(index)}
+            onClick={() => !isTransitioning && navigateTo(index)}
             className={`px-4.5 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
               currentIndex === index
                 ? "bg-accent text-accent-foreground shadow-sm"
@@ -192,211 +185,180 @@ export default function Projects({ onColorChange }: ProjectsProps) {
         ))}
       </div>
 
-      {/* 2. Main Carousel Slider Shell (Transparent wrapper) */}
-      <div className="relative flex items-center w-full">
-        {/* Floating Left Arrow (Desktop only) */}
+      {/* 2. Main Flutter CarouselView Viewport Stage */}
+      <div className="relative w-full min-h-[560px] md:min-h-[620px] flex items-center justify-center my-4 overflow-hidden">
+        {/* Floating Left Navigation Arrow */}
         <button
           onClick={handlePrev}
-          className="hidden lg:flex absolute -left-16 z-20 items-center justify-center w-12 h-12 rounded-full border border-border bg-background/80 hover:bg-background text-foreground hover:text-accent shadow-sm hover:scale-110 transition-all cursor-pointer"
+          disabled={isTransitioning}
+          className="absolute left-2 md:left-4 z-40 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-border bg-background/90 hover:bg-background text-foreground hover:text-accent shadow-lg hover:scale-110 transition-all cursor-pointer disabled:opacity-40"
           aria-label="Previous project"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
         </button>
 
-        {/* Horizontal Overflow Slide Container */}
-        <div className="overflow-hidden w-full relative">
-          <div
-            className="flex transition-transform duration-700 ease-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {PROJECTS.map((project, index) => {
-              const diff = index - currentIndex;
+        {/* Flutter CarouselView Sliding & Morphing Track */}
+        <div
+          className="flex items-center w-full transition-transform duration-600 ease-[cubic-bezier(0.2,0,0,1)]"
+          style={{
+            transform: `translateX(${trackOffset}%)`,
+          }}
+        >
+          {PROJECTS.map((project, index) => {
+            const isActive = index === currentIndex;
 
-              return (
-                <div
-                  key={project.title}
-                  className="w-full flex-shrink-0 bg-transparent border-none shadow-none"
-                >
-                  {/* Header (Parallax level 1) */}
-                  <div
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-8 transition-transform duration-700 ease-out"
-                    style={{
-                      transform: `translateX(${diff * 20}px)`,
-                    }}
-                  >
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
-                          {project.category}
-                        </span>
-                        <span className="text-xs text-muted-foreground font-medium">
-                          {project.platform}
-                        </span>
+            return (
+              <div
+                key={project.title}
+                onClick={() => !isActive && !isTransitioning && navigateTo(index)}
+                className={`flex-shrink-0 w-[76%] mx-[2%] p-6 md:p-10 rounded-3xl transition-all duration-600 ease-[cubic-bezier(0.2,0,0,1)] select-none ${
+                  isActive
+                    ? "opacity-100 border border-accent/40 bg-card/90 dark:bg-card/95 backdrop-blur-xl shadow-2xl scale-100 cursor-default z-30"
+                    : "opacity-40 border border-border/20 bg-card/40 backdrop-blur-md shadow-md scale-[0.92] cursor-pointer hover:opacity-65 z-10"
+                }`}
+              >
+                {/* Card Header (Title, Logo, Badges & Links) */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-6">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
+                        {project.category}
+                      </span>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {project.platform}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {project.logo ? (
+                        <img
+                          src={project.logo}
+                          alt={project.title}
+                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl object-cover border border-border/50 shadow-sm"
+                        />
+                      ) : (
+                        <div
+                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center font-bold text-accent text-xl shadow-sm"
+                          style={{ background: `${project.color}20`, color: project.color }}
+                        >
+                          {project.title[0]}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-2xl md:text-4xl font-extrabold text-foreground tracking-tight">
+                          {project.title}
+                        </h3>
+                        <p className="text-sm md:text-base text-muted-foreground mt-0.5">
+                          {project.description}
+                        </p>
                       </div>
-                      <div className="flex items-center gap-4">
-                        {project.logo ? (
-                          <img
-                            src={project.logo}
-                            alt={project.title}
-                            className="w-14 h-14 rounded-xl object-cover border border-border/50 shadow-sm"
-                          />
-                        ) : (
-                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 flex items-center justify-center font-bold text-accent text-xl shadow-sm">
-                            {project.title[0]}
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
-                            {project.title}
-                          </h3>
-                          <p className="text-base text-muted-foreground mt-1">
-                            {project.description}
+                    </div>
+                  </div>
+
+                  {/* External Links */}
+                  {project.links.length > 0 && (
+                    <div className="flex flex-wrap gap-2.5 self-start sm:self-auto">
+                      {project.links.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl border border-border bg-background text-xs font-bold text-accent hover:bg-accent/5 transition-colors shadow-sm"
+                        >
+                          {link.icon}
+                          {link.label}
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Case Studies Content */}
+                <div className="space-y-8 max-h-[340px] md:max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {project.cases.map((c, cIndex) => (
+                    <div
+                      key={cIndex}
+                      className="flex flex-col gap-4 border-b border-border/10 pb-6 last:border-b-0 last:pb-0"
+                    >
+                      {/* Challenge Headline */}
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
+                          The Challenge & Context
+                        </span>
+                        <h4 className="text-xl md:text-2xl font-extrabold text-foreground leading-snug tracking-tight">
+                          {c.problem}
+                        </h4>
+                      </div>
+
+                      {/* Solution & Impact Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div className="md:col-span-7 flex flex-col gap-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-500 flex items-center gap-1.5">
+                            <Lightbulb className="w-3.5 h-3.5" />
+                            Engineering Solution
+                          </span>
+                          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                            {c.solution}
+                          </p>
+                        </div>
+                        <div className="md:col-span-5 flex flex-col gap-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5">
+                            <TrendingUp className="w-3.5 h-3.5" />
+                            Impact & Metrics
+                          </span>
+                          <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-bold">
+                            {c.impact}
                           </p>
                         </div>
                       </div>
                     </div>
-
-                    {/* Links */}
-                    {project.links.length > 0 && (
-                      <div className="flex flex-wrap gap-2.5">
-                        {project.links.map((link) => (
-                          <a
-                            key={link.label}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl border border-border bg-background text-xs font-bold text-accent hover:bg-accent/5 transition-colors shadow-sm"
-                          >
-                            {link.icon}
-                            {link.label}
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Narrative Case Studies list (Floating text with horizontal parallax offsets) */}
-                  <div className="space-y-12">
-                    {project.cases.map((c, cIndex) => {
-                      const parallaxOffset = diff * (30 + cIndex * 20);
-
-                      return (
-                        <div
-                          key={cIndex}
-                          className="flex flex-col gap-6 transition-transform duration-700 ease-out border-b border-border/10 pb-8 last:border-b-0 last:pb-0"
-                          style={{
-                            transform: `translateX(${parallaxOffset}px)`,
-                          }}
-                        >
-                          {/* Large Problem/Challenge Header */}
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
-                              The Challenge & Context
-                            </span>
-                            <h4 className="text-2xl md:text-3xl font-extrabold text-foreground leading-snug tracking-tight">
-                              {c.problem}
-                            </h4>
-                          </div>
-
-                          {/* Details Grid (Solution & Impact columns) */}
-                          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pl-10">
-                            {/* Solution */}
-                            <div className="md:col-span-7 flex flex-col gap-2">
-                              <span className="text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-500 flex items-center gap-1.5">
-                                <Lightbulb className="w-4 h-4" />
-                                Engineering Solution
-                              </span>
-                              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                                {c.solution}
-                              </p>
-                            </div>
-
-                            {/* Impact */}
-                            <div className="md:col-span-5 flex flex-col gap-2">
-                              <span className="text-sm font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5">
-                                <TrendingUp className="w-4 h-4" />
-                                Impact & Metrics
-                              </span>
-                              <p className="text-base md:text-lg text-muted-foreground leading-relaxed font-bold">
-                                {c.impact}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Footer Tech stack (Parallax level 1) */}
-                  <div
-                    className="mt-8 pt-6 border-t border-border/20 flex flex-wrap items-center gap-2 transition-transform duration-700 ease-out"
-                    style={{
-                      transform: `translateX(${diff * 20}px)`,
-                    }}
-                  >
-                    <span className="text-sm font-bold text-muted uppercase tracking-wider mr-3">Technologies Used:</span>
-                    {project.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="px-3.5 py-1.5 rounded-xl bg-muted/10 text-xs md:text-sm font-semibold text-muted border border-border/10 shadow-sm"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
+
+                {/* Tech Stack Pills */}
+                <div className="mt-6 pt-4 border-t border-border/20 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
+                  {project.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="px-3 py-1 rounded-xl bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Floating Right Arrow (Desktop only) */}
+        {/* Floating Right Navigation Arrow */}
         <button
           onClick={handleNext}
-          className="hidden lg:flex absolute -right-16 z-20 items-center justify-center w-12 h-12 rounded-full border border-border bg-background/80 hover:bg-background text-foreground hover:text-accent shadow-sm hover:scale-110 transition-all cursor-pointer"
+          disabled={isTransitioning}
+          className="absolute right-2 md:right-4 z-40 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-border bg-background/90 hover:bg-background text-foreground hover:text-accent shadow-lg hover:scale-110 transition-all cursor-pointer disabled:opacity-40"
           aria-label="Next project"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
         </button>
       </div>
 
-      {/* 3. Mobile Arrow Navigation Controls & Pagination Indicators */}
-      <div className="flex items-center justify-between mt-6 lg:justify-center lg:gap-6">
-        {/* Left Arrow (Visible on Mobile) */}
-        <button
-          onClick={handlePrev}
-          className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl border border-border bg-card text-foreground hover:text-accent cursor-pointer"
-          aria-label="Previous project"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-
-        {/* Slide Indicators */}
-        <div className="flex items-center gap-2">
-          {PROJECTS.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                currentIndex === index ? "w-10 bg-accent" : "w-2.5 bg-muted/40 hover:bg-muted/60"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-          <span className="text-xs md:text-sm text-muted-foreground font-semibold ml-2">
-            {currentIndex + 1} of {PROJECTS.length}
-          </span>
-        </div>
-
-        {/* Right Arrow (Visible on Mobile) */}
-        <button
-          onClick={handleNext}
-          className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl border border-border bg-card text-foreground hover:text-accent cursor-pointer"
-          aria-label="Next project"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+      {/* 3. Slide Indicators */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {PROJECTS.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => !isTransitioning && navigateTo(index)}
+            className={`h-2.5 rounded-full transition-all cursor-pointer ${
+              currentIndex === index ? "w-10 bg-accent" : "w-2.5 bg-muted/40 hover:bg-muted/60"
+            }`}
+            aria-label={`Go to project ${index + 1}`}
+          />
+        ))}
+        <span className="text-xs md:text-sm text-muted-foreground font-semibold ml-2">
+          {currentIndex + 1} of {PROJECTS.length}
+        </span>
       </div>
     </div>
   );
