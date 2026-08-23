@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ExternalLink, Globe, Smartphone, AlertTriangle, Lightbulb, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PROJECTS = [
@@ -9,6 +9,7 @@ const PROJECTS = [
     logo: "/app-icon.png",
     category: "Mobile (AI & Social)",
     platform: "Android & iOS",
+    color: "#6366f1", // Indigo
     description: "An AI-powered cartoon creation and social media mobile application built for high-engagement feeds.",
     problem: "When launching the social feed, low-end Android devices immediately began crashing. The root cause was Android's strict hardware decoder limits: instantiating multiple concurrent video players to enable smooth scrolling exhausted device decoder resources. Furthermore, storing separate watermarked and unwatermarked video copies on the cloud for free vs. premium tiers bloated our storage costs and doubled server encoding times.",
     solution: "I ported the watermarking algorithm directly to the client devices by compiling and linking FFmpeg binaries within the Flutter build. This allowed us to dynamically overlay watermarks on-the-fly for free users. To fix the system crashes, I designed a custom Video Controller Pool Manager that caps active video players to a pool of exactly 5. As a video scrolls off-screen, its controller is recycled and reset. I implemented visibility detection to play only the active video, and preloaded adjacent videos in feed order to keep scroll latency at zero. Finally, I integrated Hive to cache feed data locally for instant startup loading.",
@@ -31,6 +32,7 @@ const PROJECTS = [
     title: "Ubill",
     category: "Full-Stack FinTech",
     platform: "Web & Mobile",
+    color: "#10b981", // Emerald
     description: "Accounting and GST compliance platform serving retail merchants and business managers.",
     problem: "Re-coding complex government-compliant tax invoice layouts into native Flutter widgets resulted in design drift between backends and frontends. Minor template tweaks required multi-codebase edits. Additionally, compiling and rendering PDFs inside the Flutter Web build was slow, leading to frozen UI threads during customer checkouts.",
     solution: "Instead of rewriting HTML/CSS templates in Flutter code, I built a JavaScript Interop bridge. This allowed our Flutter Web client to directly interface with native browser printing engines and HTML canvas APIs. We reuse the exact backend HTML templates, rendering them inside a hidden iframe and compiling the output directly to a PDF without blocking the main rendering thread.",
@@ -48,6 +50,7 @@ const PROJECTS = [
     title: "Bizstack",
     category: "Mobile (POS & Inventory)",
     platform: "Android",
+    color: "#f59e0b", // Amber
     description: "Point-of-Sale billing and inventory system tailored for small businesses.",
     problem: "Merchants operate in retail locations with highly unstable cellular connectivity. Any network latency or offline failure directly halts transactions, leading to lost sales, long checkout lines, and desynchronized inventory records across devices.",
     solution: "I architected an offline-first data layer using Android's RoomDB and SQLite. Every transaction, invoice creation, and inventory count is committed locally instantly. An automated synchronization queue runs on a background worker to poll network states, batch unsynced payloads, handle sync conflicts on the Django backend, and push real-time updates to Firebase Realtime Database once online.",
@@ -65,6 +68,7 @@ const PROJECTS = [
     title: "Engine Room Ninja",
     category: "Mobile (Education)",
     platform: "Android",
+    color: "#06b6d4", // Cyan
     description: "Study and quiz preparation utility for marine engineering candidates.",
     problem: "Distributing high-definition video lessons and interactive study assets to offshore engineers required a secure, rapid-delivery media model. Manual content releases and unorganized media assets created high operational overhead.",
     solution: "I dockerized the Node.js / Express backend to simplify scaling. I integrated AWS S3 to store study materials, generating secure, short-lived pre-signed URLs on-demand to protect copyrighted study lessons, and cached assets via CloudFront CDNs.",
@@ -82,6 +86,7 @@ const PROJECTS = [
     title: "InvusProp Admin Panel",
     category: "Cloud Admin Platform",
     platform: "Web",
+    color: "#ec4899", // Rose
     description: "Property and listing administration dashboard for real-estate managers.",
     problem: "Dealing with sensitive property transactions and confidential seller contracts required strict security permissions. Storing role configurations in client-side code was insecure, and query authorization on database levels caused API bottlenecks.",
     solution: "I integrated AWS Cognito user pools for enterprise SSO and multi-factor auth. I configured custom user role claims that are encrypted inside JWT tokens, which are parsed and validated at the edge using Next.js middleware, blocking unauthorized route rendering before it hits the backend.",
@@ -91,9 +96,42 @@ const PROJECTS = [
   },
 ];
 
-export default function Projects() {
+interface ProjectsProps {
+  onColorChange?: (color: string) => void;
+}
+
+export default function Projects({ onColorChange }: ProjectsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const activeProject = PROJECTS[currentIndex];
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Parallax mouse movements (pure CSS variable updates for peak GPU performance)
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!containerRef.current) return;
+      const { clientX, clientY } = event;
+      const { innerWidth, innerHeight } = window;
+      
+      // Calculate normalized mouse positions (-0.5 to 0.5)
+      const x = (clientX / innerWidth) - 0.5;
+      const y = (clientY / innerHeight) - 0.5;
+
+      containerRef.current.style.setProperty("--mx", `${x}`);
+      containerRef.current.style.setProperty("--my", `${y}`);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  // Notify parent component about color changes to adjust the global theme
+  useEffect(() => {
+    if (onColorChange) {
+      onColorChange(activeProject.color);
+    }
+  }, [currentIndex, onColorChange, activeProject.color]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? PROJECTS.length - 1 : prev - 1));
@@ -104,7 +142,10 @@ export default function Projects() {
   };
 
   return (
-    <div className="w-full relative py-6 max-w-5xl mx-auto">
+    <div
+      ref={containerRef}
+      className="w-full relative py-6 max-w-5xl mx-auto [--mx:0] [--my:0]"
+    >
       {/* 1. Horizontal jump-tabs navigation */}
       <div className="flex flex-wrap gap-2 mb-8 justify-center border-b border-border/20 pb-4">
         {PROJECTS.map((project, index) => (
@@ -122,7 +163,7 @@ export default function Projects() {
         ))}
       </div>
 
-      {/* 2. Main Carousel Slider Shell */}
+      {/* 2. Main Carousel Slider Shell (Transparent wrapper, letting background show through) */}
       <div className="relative flex items-center w-full">
         {/* Floating Left Arrow (Desktop only) */}
         <button
@@ -133,13 +174,19 @@ export default function Projects() {
           <ChevronLeft className="w-6 h-6" />
         </button>
 
-        {/* Case Study Card (Key forces animation to re-trigger on change) */}
+        {/* Floating Case Study (Clean transparent design) */}
         <div
           key={currentIndex}
-          className="w-full rounded-2xl border border-border bg-card/50 backdrop-blur-sm overflow-hidden hover:border-accent/30 transition-all duration-300 shadow-sm animate-fade-in-up"
+          className="w-full bg-transparent border-none shadow-none animate-fade-in-up"
         >
-          {/* Header */}
-          <div className="p-6 md:p-10 border-b border-border/25 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-muted/5">
+          {/* Header (Level 1 Parallax) */}
+          <div
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-8"
+            style={{
+              transform: "translate(calc(var(--mx) * -8px), calc(var(--my) * -8px))",
+              transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+            } as React.CSSProperties}
+          >
             <div>
               <div className="flex flex-wrap items-center gap-2.5 mb-3">
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
@@ -192,10 +239,16 @@ export default function Projects() {
             )}
           </div>
 
-          {/* Case study body (Vertical Narrative Flow to tell a story) */}
-          <div className="p-6 md:p-10 space-y-8">
-            {/* Challenge */}
-            <div className="p-6 rounded-xl border-l-4 border-amber-500 bg-amber-500/5 flex flex-col gap-3">
+          {/* Case study body (Transparent borders, floating text with layered parallax) */}
+          <div className="space-y-8">
+            {/* Challenge (Level 2 Parallax) */}
+            <div
+              className="pl-6 border-l-2 border-amber-500 bg-transparent flex flex-col gap-3"
+              style={{
+                transform: "translate(calc(var(--mx) * -16px), calc(var(--my) * -16px))",
+                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+              } as React.CSSProperties}
+            >
               <div className="flex items-center gap-2.5 font-bold text-amber-600 dark:text-amber-500 text-sm uppercase tracking-wider">
                 <AlertTriangle className="w-4 h-4" />
                 01. The Challenge & Background
@@ -205,8 +258,14 @@ export default function Projects() {
               </p>
             </div>
 
-            {/* Solution */}
-            <div className="p-6 rounded-xl border-l-4 border-blue-500 bg-blue-500/5 flex flex-col gap-3">
+            {/* Solution (Level 3 Parallax) */}
+            <div
+              className="pl-6 border-l-2 border-blue-500 bg-transparent flex flex-col gap-3"
+              style={{
+                transform: "translate(calc(var(--mx) * -28px), calc(var(--my) * -28px))",
+                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+              } as React.CSSProperties}
+            >
               <div className="flex items-center gap-2.5 font-bold text-blue-600 dark:text-blue-500 text-sm uppercase tracking-wider">
                 <Lightbulb className="w-4 h-4" />
                 02. The Engineering Journey & Architecture
@@ -216,8 +275,14 @@ export default function Projects() {
               </p>
             </div>
 
-            {/* Impact */}
-            <div className="p-6 rounded-xl border-l-4 border-emerald-500 bg-emerald-500/5 flex flex-col gap-3">
+            {/* Impact (Level 4 Parallax) */}
+            <div
+              className="pl-6 border-l-2 border-emerald-500 bg-transparent flex flex-col gap-3"
+              style={{
+                transform: "translate(calc(var(--mx) * -40px), calc(var(--my) * -40px))",
+                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+              } as React.CSSProperties}
+            >
               <div className="flex items-center gap-2.5 font-bold text-emerald-600 dark:text-emerald-500 text-sm uppercase tracking-wider">
                 <TrendingUp className="w-4 h-4" />
                 03. The Outcome & Business Impact
@@ -228,13 +293,19 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* Footer Tech stack */}
-          <div className="px-6 md:px-10 py-5 bg-muted/10 border-t border-border/20 flex flex-wrap items-center gap-2">
+          {/* Footer Tech stack (Level 1 Parallax) */}
+          <div
+            className="mt-8 pt-6 border-t border-border/20 flex flex-wrap items-center gap-2"
+            style={{
+              transform: "translate(calc(var(--mx) * -6px), calc(var(--my) * -6px))",
+              transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+            } as React.CSSProperties}
+          >
             <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
             {activeProject.tech.map((t) => (
               <span
                 key={t}
-                className="px-3 py-1 rounded bg-background text-xs font-semibold text-muted border border-border/10 shadow-sm"
+                className="px-3 py-1 rounded bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
               >
                 {t}
               </span>

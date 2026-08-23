@@ -3,8 +3,20 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-export default function ThreeBackground() {
+interface ThreeBackgroundProps {
+  color?: string;
+}
+
+export default function ThreeBackground({ color = "#6366f1" }: ThreeBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const materialRef = useRef<THREE.PointsMaterial | null>(null);
+
+  // Dynamic color updating effect
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.color.set(color);
+    }
+  }, [color]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -31,7 +43,7 @@ export default function ThreeBackground() {
     container.appendChild(renderer.domElement);
 
     // 4. Create particles (Constellation)
-    const particleCount = 100;
+    const particleCount = 120;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
 
@@ -60,15 +72,18 @@ export default function ThreeBackground() {
       return new THREE.CanvasTexture(canvas);
     };
 
-    // Material setup (blueish glow)
+    // Material setup (accent color glow)
     const material = new THREE.PointsMaterial({
       size: 0.8,
       map: createCircleTexture(),
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
-      color: new THREE.Color("#4f46e5"), // Indigo theme color
+      color: new THREE.Color(color),
     });
+
+    // Store reference to update dynamically
+    materialRef.current = material;
 
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
@@ -108,12 +123,12 @@ export default function ThreeBackground() {
       targetY += (mouseY - targetY) * 0.05;
 
       // Rotate particle cloud gently
-      particles.rotation.y += 0.001;
-      particles.rotation.x += 0.0005;
+      particles.rotation.y += 0.0008;
+      particles.rotation.x += 0.0004;
 
       // Apply mouse movement parallax depth to scene
-      scene.rotation.y = targetX * 0.5;
-      scene.rotation.x = -targetY * 0.5;
+      scene.rotation.y = targetX * 0.3;
+      scene.rotation.x = -targetY * 0.3;
 
       renderer.render(scene, camera);
     };
@@ -130,6 +145,7 @@ export default function ThreeBackground() {
       geometry.dispose();
       material.dispose();
       renderer.dispose();
+      materialRef.current = null;
 
       // Safely remove canvas from container
       if (container.contains(renderer.domElement)) {

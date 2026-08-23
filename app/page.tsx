@@ -11,14 +11,26 @@ import ThreeBackground from "@/components/ThreeBackground";
 
 export default function Home() {
   const [activeView, setActiveView] = useState("projects");
+  const [projectColor, setProjectColor] = useState("#6366f1");
+
+  // Handle page state change, resetting accent color to Indigo if navigating away from projects
+  const handleViewChange = (view: string) => {
+    setActiveView(view);
+    if (view !== "projects") {
+      setProjectColor("#6366f1");
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen relative">
-      {/* Global Interactive 3D Background */}
-      <ThreeBackground />
+    <div
+      className="flex flex-col min-h-screen relative transition-all duration-700 ease-in-out"
+      style={{ "--accent": projectColor } as React.CSSProperties}
+    >
+      {/* Global Interactive 3D Background (Smoothly color-shifting) */}
+      <ThreeBackground color={projectColor} />
 
       {/* Navigation */}
-      <Navbar activeView={activeView} onViewChange={setActiveView} />
+      <Navbar activeView={activeView} onViewChange={handleViewChange} />
 
       {/* Main Switcher Content */}
       <main className="flex-grow flex flex-col justify-center w-full max-w-6xl mx-auto px-6 py-12 md:py-16 z-10 animate-fade-in">
@@ -42,7 +54,7 @@ export default function Home() {
             </div>
             
             {/* Carousel Projects component */}
-            <Projects />
+            <Projects onColorChange={setProjectColor} />
           </div>
         )}
 
