@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ExternalLink, Globe, Smartphone, AlertTriangle, Lightbulb, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PROJECTS = [
@@ -103,28 +103,6 @@ interface ProjectsProps {
 export default function Projects({ onColorChange }: ProjectsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const activeProject = PROJECTS[currentIndex];
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Parallax mouse movements (pure CSS variable updates for peak GPU performance)
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { clientX, clientY } = event;
-      const { innerWidth, innerHeight } = window;
-      
-      // Calculate normalized mouse positions (-0.5 to 0.5)
-      const x = (clientX / innerWidth) - 0.5;
-      const y = (clientY / innerHeight) - 0.5;
-
-      containerRef.current.style.setProperty("--mx", `${x}`);
-      containerRef.current.style.setProperty("--my", `${y}`);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
 
   // Notify parent component about color changes to adjust the global theme
   useEffect(() => {
@@ -142,10 +120,7 @@ export default function Projects({ onColorChange }: ProjectsProps) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full relative py-6 max-w-5xl mx-auto [--mx:0] [--my:0]"
-    >
+    <div className="w-full relative py-6 max-w-5xl mx-auto overflow-x-clip">
       {/* 1. Horizontal jump-tabs navigation */}
       <div className="flex flex-wrap gap-2 mb-8 justify-center border-b border-border/20 pb-4">
         {PROJECTS.map((project, index) => (
@@ -174,142 +149,151 @@ export default function Projects({ onColorChange }: ProjectsProps) {
           <ChevronLeft className="w-6 h-6" />
         </button>
 
-        {/* Floating Case Study (Clean transparent design) */}
-        <div
-          key={currentIndex}
-          className="w-full bg-transparent border-none shadow-none animate-fade-in-up"
-        >
-          {/* Header (Level 1 Parallax) */}
+        {/* Horizontal Overflow Slide Container */}
+        <div className="overflow-hidden w-full relative">
           <div
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-8"
-            style={{
-              transform: "translate(calc(var(--mx) * -8px), calc(var(--my) * -8px))",
-              transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
-            } as React.CSSProperties}
+            className="flex transition-transform duration-700 ease-out"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            <div>
-              <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
-                  {activeProject.category}
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">
-                  {activeProject.platform}
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                {activeProject.logo ? (
-                  <img
-                    src={activeProject.logo}
-                    alt={activeProject.title}
-                    className="w-12 h-12 rounded-xl object-cover border border-border/50 shadow-sm"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 flex items-center justify-center font-bold text-accent text-lg shadow-sm">
-                    {activeProject.title[0]}
-                  </div>
-                )}
-                <div>
-                  <h3 className="text-3xl font-extrabold text-foreground tracking-tight">
-                    {activeProject.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">
-                    {activeProject.description}
-                  </p>
-                </div>
-              </div>
-            </div>
+            {PROJECTS.map((project, index) => {
+              // Calculate slide difference for parallax calculations
+              const diff = index - currentIndex;
 
-            {/* Links */}
-            {activeProject.links.length > 0 && (
-              <div className="flex flex-wrap gap-2.5">
-                {activeProject.links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl border border-border bg-background text-xs font-bold text-accent hover:bg-accent/5 transition-colors shadow-sm"
+              return (
+                <div
+                  key={project.title}
+                  className="w-full flex-shrink-0 bg-transparent border-none shadow-none"
+                >
+                  {/* Header (Parallax level 1) */}
+                  <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-8 transition-transform duration-700 ease-out"
+                    style={{
+                      transform: `translateX(${diff * 20}px)`,
+                    }}
                   >
-                    {link.icon}
-                    {link.label}
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
+                          {project.category}
+                        </span>
+                        <span className="text-xs text-muted-foreground font-medium">
+                          {project.platform}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {project.logo ? (
+                          <img
+                            src={project.logo}
+                            alt={project.title}
+                            className="w-12 h-12 rounded-xl object-cover border border-border/50 shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 flex items-center justify-center font-bold text-accent text-lg shadow-sm">
+                            {project.title[0]}
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="text-3xl font-extrabold text-foreground tracking-tight">
+                            {project.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-0.5">
+                            {project.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-          {/* Case study body (Transparent borders, floating text with layered parallax) */}
-          <div className="space-y-8">
-            {/* Challenge (Level 2 Parallax) */}
-            <div
-              className="pl-6 border-l-2 border-amber-500 bg-transparent flex flex-col gap-3"
-              style={{
-                transform: "translate(calc(var(--mx) * -16px), calc(var(--my) * -16px))",
-                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
-              } as React.CSSProperties}
-            >
-              <div className="flex items-center gap-2.5 font-bold text-amber-600 dark:text-amber-500 text-sm uppercase tracking-wider">
-                <AlertTriangle className="w-4 h-4" />
-                01. The Challenge & Background
-              </div>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {activeProject.problem}
-              </p>
-            </div>
+                    {/* Links */}
+                    {project.links.length > 0 && (
+                      <div className="flex flex-wrap gap-2.5">
+                        {project.links.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl border border-border bg-background text-xs font-bold text-accent hover:bg-accent/5 transition-colors shadow-sm"
+                          >
+                            {link.icon}
+                            {link.label}
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-            {/* Solution (Level 3 Parallax) */}
-            <div
-              className="pl-6 border-l-2 border-blue-500 bg-transparent flex flex-col gap-3"
-              style={{
-                transform: "translate(calc(var(--mx) * -28px), calc(var(--my) * -28px))",
-                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
-              } as React.CSSProperties}
-            >
-              <div className="flex items-center gap-2.5 font-bold text-blue-600 dark:text-blue-500 text-sm uppercase tracking-wider">
-                <Lightbulb className="w-4 h-4" />
-                02. The Engineering Journey & Architecture
-              </div>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {activeProject.solution}
-              </p>
-            </div>
+                  {/* Case study body (Transparent borders, floating text with horizontal parallax offsets) */}
+                  <div className="space-y-8">
+                    {/* Challenge (Parallax level 2) */}
+                    <div
+                      className="pl-6 border-l-2 border-amber-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
+                      style={{
+                        transform: `translateX(${diff * 40}px)`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5 font-bold text-amber-600 dark:text-amber-500 text-sm uppercase tracking-wider">
+                        <AlertTriangle className="w-4 h-4" />
+                        01. The Challenge & Background
+                      </div>
+                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                        {project.problem}
+                      </p>
+                    </div>
 
-            {/* Impact (Level 4 Parallax) */}
-            <div
-              className="pl-6 border-l-2 border-emerald-500 bg-transparent flex flex-col gap-3"
-              style={{
-                transform: "translate(calc(var(--mx) * -40px), calc(var(--my) * -40px))",
-                transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
-              } as React.CSSProperties}
-            >
-              <div className="flex items-center gap-2.5 font-bold text-emerald-600 dark:text-emerald-500 text-sm uppercase tracking-wider">
-                <TrendingUp className="w-4 h-4" />
-                03. The Outcome & Business Impact
-              </div>
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {activeProject.impact}
-              </p>
-            </div>
-          </div>
+                    {/* Solution (Parallax level 3) */}
+                    <div
+                      className="pl-6 border-l-2 border-blue-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
+                      style={{
+                        transform: `translateX(${diff * 60}px)`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5 font-bold text-blue-600 dark:text-blue-500 text-sm uppercase tracking-wider">
+                        <Lightbulb className="w-4 h-4" />
+                        02. The Engineering Journey & Architecture
+                      </div>
+                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                        {project.solution}
+                      </p>
+                    </div>
 
-          {/* Footer Tech stack (Level 1 Parallax) */}
-          <div
-            className="mt-8 pt-6 border-t border-border/20 flex flex-wrap items-center gap-2"
-            style={{
-              transform: "translate(calc(var(--mx) * -6px), calc(var(--my) * -6px))",
-              transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
-            } as React.CSSProperties}
-          >
-            <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
-            {activeProject.tech.map((t) => (
-              <span
-                key={t}
-                className="px-3 py-1 rounded bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
-              >
-                {t}
-              </span>
-            ))}
+                    {/* Impact (Parallax level 4) */}
+                    <div
+                      className="pl-6 border-l-2 border-emerald-500 bg-transparent flex flex-col gap-3 transition-transform duration-700 ease-out"
+                      style={{
+                        transform: `translateX(${diff * 80}px)`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5 font-bold text-emerald-600 dark:text-emerald-500 text-sm uppercase tracking-wider">
+                        <TrendingUp className="w-4 h-4" />
+                        03. The Outcome & Business Impact
+                      </div>
+                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                        {project.impact}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer Tech stack (Parallax level 1) */}
+                  <div
+                    className="mt-8 pt-6 border-t border-border/20 flex flex-wrap items-center gap-2 transition-transform duration-700 ease-out"
+                    style={{
+                      transform: `translateX(${diff * 20}px)`,
+                    }}
+                  >
+                    <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
+                    {project.tech.map((t) => (
+                      <span
+                        key={t}
+                        className="px-3 py-1 rounded bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
