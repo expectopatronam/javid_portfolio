@@ -183,7 +183,7 @@ export default function Contact() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="John Doe"
+                      placeholder="Your Name"
                       className="h-11 px-4 rounded-xl border border-border bg-background hover:border-accent/40 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all"
                     />
                   </div>
@@ -200,7 +200,7 @@ export default function Contact() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="john@example.com"
+                      placeholder="your.email@example.com"
                       className="h-11 px-4 rounded-xl border border-border bg-background hover:border-accent/40 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all"
                     />
                   </div>
