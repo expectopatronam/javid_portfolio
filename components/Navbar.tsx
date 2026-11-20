@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Code, Mail, Phone } from "lucide-react";
+import { Menu, X, Code2, Mail, Phone } from "lucide-react";
 
 const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -16,6 +16,20 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
     <rect width="4" height="12" x="2" y="9" />
     <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
   </svg>
 );
 
@@ -37,25 +51,30 @@ const NAV_ITEMS = [
 ];
 
 interface NavbarProps {
-  activeView: string;
-  onViewChange: (view: string) => void;
+  activeSection: string;
+  onNavigate: (id: string) => void;
 }
 
-export default function Navbar({ activeView, onViewChange }: NavbarProps) {
+export default function Navbar({ activeSection, onNavigate }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleNavClick = (id: string) => {
+    onNavigate(id);
+    setIsOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo / Brand */}
+        {/* Brand / Logo */}
         <button
-          onClick={() => onViewChange("projects")}
-          className="flex items-center gap-2 group cursor-pointer"
+          onClick={() => handleNavClick("projects")}
+          className="flex items-center gap-2.5 group cursor-pointer"
         >
           <div className="p-2 rounded-xl bg-accent/10 text-accent group-hover:scale-110 transition-transform duration-300">
-            <Code className="w-5 h-5" />
+            <Code2 className="w-5 h-5" />
           </div>
-          <span className="font-bold text-lg tracking-tight group-hover:text-accent transition-colors">
+          <span className="font-extrabold text-lg tracking-tight group-hover:text-accent transition-colors">
             Javid.dev
           </span>
         </button>
@@ -65,50 +84,58 @@ export default function Navbar({ activeView, onViewChange }: NavbarProps) {
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
-              onClick={() => onViewChange(item.id)}
-              className={`text-sm font-medium transition-colors hover:text-accent relative py-1 cursor-pointer ${
-                activeView === item.id ? "text-accent" : "text-muted"
-              }`}
+              onClick={() => handleNavClick(item.id)}
+              className={`text-sm font-semibold transition-colors hover:text-accent relative py-1 cursor-pointer ${activeSection === item.id ? "text-accent" : "text-muted-foreground"
+                }`}
             >
               {item.label}
-              {activeView === item.id && (
+              {activeSection === item.id && (
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full animate-fade-in" />
               )}
             </button>
           ))}
         </nav>
 
-        {/* Social / Direct Action Links */}
+        {/* Quick Social & Action Links */}
         <div className="hidden md:flex items-center gap-2">
           <a
-            href="tel:+916383007505"
-            className="p-2 rounded-lg text-muted hover:text-indigo-500 hover:bg-indigo-500/10 transition-colors"
-            title="Call +91 63830 07505"
+            href="https://github.com/expectopatronam"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors"
+            title="GitHub Profile"
           >
-            <Phone className="w-4 h-4" />
+            <GithubIcon className="w-4 h-4" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/javid-akeel/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-xl text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 transition-colors"
+            title="LinkedIn Profile"
+          >
+            <LinkedinIcon className="w-4 h-4" />
           </a>
           <a
             href="https://wa.me/916383007505"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 rounded-lg text-muted hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
-            title="WhatsApp +91 63830 07505"
+            className="p-2 rounded-xl text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+            title="WhatsApp"
           >
             <WhatsappIcon className="w-4 h-4" />
           </a>
           <a
-            href="https://linkedin.com/in/javid-akeel"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg text-muted hover:text-blue-500 hover:bg-blue-500/10 transition-colors"
-            title="LinkedIn"
+            href="tel:+916383007505"
+            className="p-2 rounded-xl text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/10 transition-colors"
+            title="Call +91 63830 07505"
           >
-            <LinkedinIcon className="w-4 h-4" />
+            <Phone className="w-4 h-4" />
           </a>
           <a
-            href="mailto:farrukjavid@gmail.com"
-            className="p-2 rounded-lg text-muted hover:text-accent hover:bg-muted/10 transition-colors"
-            title="Email"
+            href="mailto:workwithakeel@gmail.com"
+            className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
+            title="Email workwithakeel@gmail.com"
           >
             <Mail className="w-4 h-4" />
           </a>
@@ -117,56 +144,54 @@ export default function Navbar({ activeView, onViewChange }: NavbarProps) {
         {/* Mobile menu button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 rounded-xl text-muted hover:text-foreground hover:bg-muted/10 transition-colors"
+          className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors cursor-pointer"
           aria-label="Toggle menu"
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile menu panel */}
+      {/* Mobile Menu Panel */}
       {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border/80 px-6 py-4 flex flex-col gap-2 animate-fade-in shadow-lg">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border/80 px-6 py-4 flex flex-col gap-2 animate-fade-in shadow-xl">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
-              onClick={() => {
-                onViewChange(item.id);
-                setIsOpen(false);
-              }}
-              className={`text-base font-medium py-2 text-left border-b border-border/30 transition-colors w-full cursor-pointer ${
-                activeView === item.id ? "text-accent" : "text-muted"
-              }`}
+              onClick={() => handleNavClick(item.id)}
+              className={`text-base font-semibold py-2.5 text-left border-b border-border/30 transition-colors w-full cursor-pointer ${activeSection === item.id ? "text-accent" : "text-muted-foreground"
+                }`}
             >
               {item.label}
             </button>
           ))}
-          <div className="flex flex-wrap items-center gap-4 py-2 mt-2">
+          <div className="flex flex-wrap items-center gap-4 py-3 mt-1">
             <a
-              href="tel:+916383007505"
-              className="flex items-center gap-2 text-sm text-muted hover:text-indigo-500"
+              href="https://github.com/expectopatronam"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground"
             >
-              <Phone className="w-4 h-4" /> Call
+              <GithubIcon className="w-4 h-4" /> GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com/in/javid-akeel/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-blue-500"
+            >
+              <LinkedinIcon className="w-4 h-4" /> LinkedIn
             </a>
             <a
               href="https://wa.me/916383007505"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted hover:text-emerald-500"
+              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-emerald-500"
             >
               <WhatsappIcon className="w-4 h-4" /> WhatsApp
             </a>
             <a
-              href="https://linkedin.com/in/javid-akeel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted hover:text-blue-500"
-            >
-              <LinkedinIcon className="w-4 h-4" /> LinkedIn
-            </a>
-            <a
-              href="mailto:farrukjavid@gmail.com"
-              className="flex items-center gap-2 text-sm text-muted hover:text-accent"
+              href="mailto:workwithakeel@gmail.com"
+              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-accent"
             >
               <Mail className="w-4 h-4" /> Email
             </a>
