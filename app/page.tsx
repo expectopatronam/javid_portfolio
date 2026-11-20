@@ -8,6 +8,8 @@ import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ThreeBackground from "@/components/ThreeBackground";
+import FabricBackground from "@/components/FabricBackground";
+import CodingCursor from "@/components/CodingCursor";
 import SnapAvatar from "@/components/SnapAvatar";
 import { useScreenType } from "@/hooks/useScreenType";
 import { Sparkles, ArrowRight, ShieldCheck, Briefcase, Cpu, Layers } from "lucide-react";
@@ -56,8 +58,14 @@ export default function Home() {
       className="flex flex-col min-h-screen relative transition-all duration-700 ease-in-out"
       style={{ "--accent": projectColor } as React.CSSProperties}
     >
-      {/* Global Interactive 3D Background */}
+      {/* Interactive Elastic Fabric Mesh Layer reacting to mouse */}
+      <FabricBackground color={projectColor} />
+
+      {/* Global Interactive 3D Particles Background */}
       <ThreeBackground color={projectColor} />
+
+      {/* Coding-Themed Interactive Cursor Follower */}
+      <CodingCursor color={projectColor} />
 
       {/* Dynamic Ambient Blur Glow */}
       <div
