@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Code2, Mail, Phone } from "lucide-react";
+import Link from "next/link";
+import { Menu, X, Code2, Mail, Phone, FileText } from "lucide-react";
 
 const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -139,6 +140,14 @@ export default function Navbar({ activeSection, onNavigate }: NavbarProps) {
           >
             <Mail className="w-4 h-4" />
           </a>
+
+          <Link
+            href="/resume"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-accent/40 bg-accent/10 text-accent hover:bg-accent hover:text-accent-foreground text-xs font-bold transition-all shadow-xs ml-1"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Resume</span>
+          </Link>
         </div>
 
         {/* Mobile menu button */}
@@ -164,6 +173,14 @@ export default function Navbar({ activeSection, onNavigate }: NavbarProps) {
               {item.label}
             </button>
           ))}
+          <Link
+            href="/resume"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-2 text-base font-bold py-2.5 text-accent border-b border-border/30 w-full"
+          >
+            <FileText className="w-4 h-4" />
+            Resume / CV
+          </Link>
           <div className="flex flex-wrap items-center gap-4 py-3 mt-1">
             <a
               href="https://github.com/expectopatronam"

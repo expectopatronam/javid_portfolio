@@ -15,7 +15,22 @@ export default function Footer() {
         </div>
 
         {/* Direct Links */}
-        <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-medium text-muted-foreground">
+          <a
+            href="/resume"
+            className="text-accent font-semibold hover:underline transition-colors"
+          >
+            Resume / CV
+          </a>
+          <span>•</span>
+          <a
+            href="/javid-resume.pdf"
+            download="Javid_Akeel_Resume.pdf"
+            className="hover:text-accent transition-colors"
+          >
+            Download PDF
+          </a>
+          <span>•</span>
           <a
             href="https://github.com/expectopatronam"
             target="_blank"

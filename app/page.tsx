@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
@@ -12,7 +13,7 @@ import FabricBackground from "@/components/FabricBackground";
 import CodingCursor from "@/components/CodingCursor";
 import SnapAvatar from "@/components/SnapAvatar";
 import { useScreenType } from "@/hooks/useScreenType";
-import { Sparkles, ArrowRight, ShieldCheck, Briefcase, Cpu, Layers } from "lucide-react";
+import { Sparkles, ArrowRight, ShieldCheck, Briefcase, Cpu, Layers, FileText, Download } from "lucide-react";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("projects");
@@ -112,12 +113,33 @@ export default function Home() {
                   <Sparkles className="w-3.5 h-3.5 text-violet-500" />
                   Multimodal GenAI & FFmpeg
                 </span>
+              {/* Primary Call to Action buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-3">
+                <Link
+                  href="/resume"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 text-xs sm:text-sm font-bold transition-all shadow-md shadow-accent/25"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>View Resume</span>
+                </Link>
+
+                <a
+                  href="/javid-resume.pdf"
+                  download="Javid_Akeel_Resume.pdf"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-muted/10 text-xs sm:text-sm font-bold text-foreground transition-all shadow-xs"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download CV</span>
+                </a>
+
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-accent hover:underline cursor-pointer ml-1"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-bold text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
                 >
-                  Get in touch <ArrowRight className="w-3 h-3" />
+                  <span>Contact Me</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
+              </div>
               </div>
             </div>
 
