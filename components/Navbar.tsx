@@ -1,220 +1,165 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Code2, Mail, Phone, FileText } from "lucide-react";
+import Image from "next/image";
+import { FileText, ArrowUpRight, Menu, X } from "lucide-react";
 
-const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
+export default function Navbar() {
+  const [activeSection, setActiveSection] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-  </svg>
-);
+  useEffect(() => {
+    const sections = ["impact", "apps", "experience", "stack", "contact"];
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop - 140;
+          const height = el.offsetHeight;
+          if (scrollY >= top && scrollY < top + height) {
+            setActiveSection(sectionId);
+            break;
+          }
+        }
+      }
+    };
 
-const WhatsappIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    {...props}
-  >
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.99c-.002 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662a11.87 11.87 0 005.71 1.455h.005c6.554 0 11.89-5.335 11.893-11.893 0-3.177-1.238-6.165-3.498-8.418" />
-  </svg>
-);
-
-const NAV_ITEMS = [
-  { label: "Projects", id: "projects" },
-  { label: "Skills", id: "skills" },
-  { label: "Experience", id: "experience" },
-  { label: "Contact", id: "contact" },
-];
-
-interface NavbarProps {
-  activeSection: string;
-  onNavigate: (id: string) => void;
-}
-
-export default function Navbar({ activeSection, onNavigate }: NavbarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleNavClick = (id: string) => {
-    onNavigate(id);
-    setIsOpen(false);
-  };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Brand / Logo */}
-        <button
-          onClick={() => handleNavClick("projects")}
-          className="flex items-center gap-2.5 group cursor-pointer"
-        >
-          <div className="p-2 rounded-xl bg-accent/10 text-accent group-hover:scale-110 transition-transform duration-300">
-            <Code2 className="w-5 h-5" />
-          </div>
-          <span className="font-extrabold text-lg tracking-tight group-hover:text-accent transition-colors">
-            Javid.dev
-          </span>
-        </button>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              className={`text-sm font-semibold transition-colors hover:text-accent relative py-1 cursor-pointer ${activeSection === item.id ? "text-accent" : "text-muted-foreground"
-                }`}
-            >
-              {item.label}
-              {activeSection === item.id && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full animate-fade-in" />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Quick Social & Action Links */}
-        <div className="hidden md:flex items-center gap-2">
-          <a
-            href="https://github.com/expectopatronam"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors"
-            title="GitHub Profile"
-          >
-            <GithubIcon className="w-4 h-4" />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/javid-akeel/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 transition-colors"
-            title="LinkedIn Profile"
-          >
-            <LinkedinIcon className="w-4 h-4" />
-          </a>
-          <a
-            href="https://wa.me/916383007505"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
-            title="WhatsApp"
-          >
-            <WhatsappIcon className="w-4 h-4" />
-          </a>
-          <a
-            href="tel:+916383007505"
-            className="p-2 rounded-xl text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/10 transition-colors"
-            title="Call +91 63830 07505"
-          >
-            <Phone className="w-4 h-4" />
-          </a>
-          <a
-            href="mailto:workwithakeel@gmail.com"
-            className="p-2 rounded-xl text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
-            title="Email workwithakeel@gmail.com"
-          >
-            <Mail className="w-4 h-4" />
-          </a>
-
-          <Link
-            href="/resume"
-            className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-accent/40 bg-accent/10 text-accent hover:bg-accent hover:text-accent-foreground text-xs font-bold transition-all shadow-xs ml-1"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Resume</span>
+    <header id="nav" className="fixed top-0 inset-x-0 z-50 transition-all duration-300">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="mt-4 flex items-center justify-between rounded-full border border-white/10 bg-[#0B0D12]/80 backdrop-blur-xl px-3 py-2 pl-3 shadow-2xl">
+          {/* Avatar + Brand */}
+          <Link href="#top" className="flex items-center gap-2.5 group">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden ring-1 ring-white/15 group-hover:ring-[#C5F560] transition-all">
+              <Image
+                src="/avatar.png"
+                alt="Javid Akeel"
+                fill
+                sizes="32px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <span className="font-display font-bold text-[15px] tracking-tight">
+              javid<span className="text-[#C5F560]">.</span>akeel
+            </span>
           </Link>
+
+          {/* Nav links (Desktop) */}
+          <nav className="hidden md:flex items-center gap-7 text-sm text-zinc-400">
+            <a
+              className={`nav-link hover:text-white transition ${activeSection === "impact" ? "active text-white font-medium" : ""}`}
+              href="#impact"
+            >
+              Impact
+            </a>
+            <a
+              className={`nav-link hover:text-white transition ${activeSection === "apps" ? "active text-white font-medium" : ""}`}
+              href="#apps"
+            >
+              Apps
+            </a>
+            <a
+              className={`nav-link hover:text-white transition ${activeSection === "experience" ? "active text-white font-medium" : ""}`}
+              href="#experience"
+            >
+              Experience
+            </a>
+            <a
+              className={`nav-link hover:text-white transition ${activeSection === "stack" ? "active text-white font-medium" : ""}`}
+              href="#stack"
+            >
+              Stack
+            </a>
+          </nav>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2">
+            <Link
+              href="/resume"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-xs font-semibold text-zinc-300 hover:text-white hover:border-white/25 transition"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#C5F560]" />
+              <span>Resume</span>
+            </Link>
+
+            <a
+              href="#contact"
+              className="btn btn-primary !py-2 !px-4 !text-sm cursor-pointer"
+            >
+              Hire me
+            </a>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-zinc-400 hover:text-white transition cursor-pointer"
+              aria-label="Toggle Navigation Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors cursor-pointer"
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-2 rounded-2xl border border-white/10 bg-[#0B0D12]/95 backdrop-blur-xl p-4 shadow-2xl flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm text-zinc-300 hover:text-white rounded-lg hover:bg-white/5 transition"
+              href="#impact"
+            >
+              01 — Impact
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm text-zinc-300 hover:text-white rounded-lg hover:bg-white/5 transition"
+              href="#apps"
+            >
+              02 — Shipped Apps
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm text-zinc-300 hover:text-white rounded-lg hover:bg-white/5 transition"
+              href="#experience"
+            >
+              03 — Experience
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm text-zinc-300 hover:text-white rounded-lg hover:bg-white/5 transition"
+              href="#stack"
+            >
+              04 — Tech Stack
+            </a>
+            <a
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm text-zinc-300 hover:text-white rounded-lg hover:bg-white/5 transition"
+              href="#contact"
+            >
+              05 — Contact
+            </a>
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+              <Link
+                href="/resume"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#C5F560]"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Interactive Resume / PDF</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Mobile Menu Panel */}
-      {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border/80 px-6 py-4 flex flex-col gap-2 animate-fade-in shadow-xl">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              className={`text-base font-semibold py-2.5 text-left border-b border-border/30 transition-colors w-full cursor-pointer ${activeSection === item.id ? "text-accent" : "text-muted-foreground"
-                }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          <Link
-            href="/resume"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 text-base font-bold py-2.5 text-accent border-b border-border/30 w-full"
-          >
-            <FileText className="w-4 h-4" />
-            Resume / CV
-          </Link>
-          <div className="flex flex-wrap items-center gap-4 py-3 mt-1">
-            <a
-              href="https://github.com/expectopatronam"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground"
-            >
-              <GithubIcon className="w-4 h-4" /> GitHub
-            </a>
-            <a
-              href="https://www.linkedin.com/in/javid-akeel/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-blue-500"
-            >
-              <LinkedinIcon className="w-4 h-4" /> LinkedIn
-            </a>
-            <a
-              href="https://wa.me/916383007505"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-emerald-500"
-            >
-              <WhatsappIcon className="w-4 h-4" /> WhatsApp
-            </a>
-            <a
-              href="mailto:workwithakeel@gmail.com"
-              className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-accent"
-            >
-              <Mail className="w-4 h-4" /> Email
-            </a>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

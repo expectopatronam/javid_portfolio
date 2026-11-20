@@ -32,8 +32,8 @@ export default function ResumePage() {
   return (
     <div className="min-h-screen relative flex flex-col bg-background text-foreground transition-all duration-300">
       {/* Subtle Background */}
-      <ThreeBackground color="#6366f1" />
-      <CodingCursor color="#6366f1" />
+      <ThreeBackground color="#C5F560" />
+      <CodingCursor color="#C5F560" />
 
       {/* Top Navigation & Action Toolbar */}
       <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur-md print:hidden">
