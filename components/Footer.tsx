@@ -1,70 +1,32 @@
-import { ArrowUp, Heart } from "lucide-react";
+import Link from "next/link";
+import { FileText, ArrowUp } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="py-12 bg-background border-t border-border/20">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Copy details */}
-        <div className="text-center md:text-left space-y-1">
-          <p className="text-sm font-semibold text-foreground">
-            © {new Date().getFullYear()} Javid Akeel. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Mobile & GenAI Software Engineer · Shipped 5+ production apps to App Store & Play Store.
-          </p>
-        </div>
-
-        {/* Direct Links */}
-        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-medium text-muted-foreground">
-          <a
+    <footer className="relative border-t border-white/[.07] bg-[#07080B]">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-6 flex flex-col sm:flex-row gap-3 items-center justify-between text-[13px] text-zinc-500">
+        <div className="flex items-center gap-4">
+          <span>© 2026 Javid Akeel</span>
+          <span>·</span>
+          <Link
             href="/resume"
-            className="text-accent font-semibold hover:underline transition-colors"
+            className="text-zinc-400 hover:text-[#C5F560] transition inline-flex items-center gap-1 font-medium"
           >
-            Resume / CV
-          </a>
-          <span>•</span>
-          <a
-            href="/javid-resume.pdf"
-            download="Javid_Akeel_Resume.pdf"
-            className="hover:text-accent transition-colors"
-          >
-            Download PDF
-          </a>
-          <span>•</span>
-          <a
-            href="https://github.com/expectopatronam"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-accent transition-colors"
-          >
-            GitHub
-          </a>
-          <span>•</span>
-          <a
-            href="https://www.linkedin.com/in/javid-akeel/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-accent transition-colors"
-          >
-            LinkedIn
-          </a>
-          <span>•</span>
-          <a
-            href="mailto:workwithakeel@gmail.com"
-            className="hover:text-accent transition-colors"
-          >
-            workwithakeel@gmail.com
-          </a>
+            <FileText className="w-3.5 h-3.5" />
+            <span>Resume (Viewer &amp; PDF)</span>
+          </Link>
         </div>
 
-        {/* Scroll back to top */}
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="p-3 rounded-xl border border-border bg-card hover:bg-muted/10 text-muted-foreground hover:text-accent hover:border-accent/30 transition-all shadow-sm cursor-pointer"
-          aria-label="Scroll back to top"
-        >
-          <ArrowUp className="w-4 h-4 animate-bounce" />
-        </button>
+        <div className="flex items-center gap-4">
+          <span className="font-mono">built with Next.js + Tailwind · Chennai, IN</span>
+          <a
+            href="#top"
+            className="p-1.5 rounded-full border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition"
+            title="Back to top"
+          >
+            <ArrowUp className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
     </footer>
   );
