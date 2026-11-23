@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { IMPACT_DATA } from "@/data/portfolio";
 
 export default function Impact() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,17 +23,19 @@ export default function Impact() {
     return () => container.removeEventListener("pointermove", handlePointerMove);
   }, []);
 
+  const { metrics } = IMPACT_DATA;
+
   return (
     <section id="impact" ref={containerRef} className="relative mx-auto max-w-6xl px-5 sm:px-8 py-24 sm:py-32">
       <div className="flex items-end justify-between gap-6 flex-wrap">
         <div>
-          <div className="kicker">01 — Impact</div>
+          <div className="kicker">{IMPACT_DATA.kicker}</div>
           <h2 className="font-display font-bold tracking-tight text-4xl sm:text-5xl mt-3 text-white">
-            Small decisions, real results.
+            {IMPACT_DATA.title}
           </h2>
         </div>
         <p className="text-zinc-400 max-w-sm">
-          A few architectural decisions and performance optimizations from the last couple of years that I&apos;m proud of.
+          {IMPACT_DATA.subtitle}
         </p>
       </div>
 
@@ -40,15 +43,15 @@ export default function Impact() {
         {/* Card 1: FFmpeg ~75% (Big Card) */}
         <div className="card spot md:col-span-3 md:row-span-2 p-7 sm:p-9 flex flex-col justify-between">
           <div>
-            <div className="kicker">Selfitoons · FFmpeg</div>
+            <div className="kicker">{metrics.ffmpeg.kicker}</div>
             <div className="font-display font-extrabold text-[84px] sm:text-[116px] leading-none mt-6 grad-text tracking-tight">
-              ~75%
+              {metrics.ffmpeg.stat}
             </div>
             <div className="text-xl font-semibold mt-2 text-white">
-              less backend video processing
+              {metrics.ffmpeg.label}
             </div>
             <p className="text-zinc-400 mt-3 max-w-md text-sm sm:text-base leading-relaxed">
-              We were watermarking every video on the server. I moved watermarking onto the mobile client with FFmpeg, so the cloud backend only renders one clean master copy.
+              {metrics.ffmpeg.description}
             </p>
           </div>
 
@@ -122,66 +125,79 @@ export default function Impact() {
         {/* Card 2: Store Releases */}
         <div className="card spot md:col-span-3 p-7 flex flex-col justify-between">
           <div>
-            <div className="kicker">Store releases</div>
+            <div className="kicker">{metrics.releases.kicker}</div>
             <div className="flex items-baseline gap-4 mt-4">
-              <div className="font-display font-extrabold text-6xl leading-none text-white">5+</div>
+              <div className="font-display font-extrabold text-6xl leading-none text-white">
+                {metrics.releases.stat}
+              </div>
               <div className="text-zinc-300 pb-1 text-base font-medium">
-                production apps across App Store and Google Play
+                {metrics.releases.label}
               </div>
             </div>
           </div>
           <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
-            Code signing, TestFlight, privacy manifests, fastlane staged rollouts, review submissions. I handle the entire release lifecycle, not just the build.
+            {metrics.releases.description}
           </p>
         </div>
 
         {/* Card 3: Ubill 650 users */}
         <div className="card spot md:col-span-2 p-7 flex flex-col justify-between">
           <div>
-            <div className="kicker">Ubill</div>
-            <div className="font-display font-extrabold text-5xl leading-none mt-4 text-white">650+</div>
+            <div className="kicker">{metrics.ubill.kicker}</div>
+            <div className="font-display font-extrabold text-5xl leading-none mt-4 text-white">
+              {metrics.ubill.stat}
+            </div>
           </div>
           <p className="text-zinc-400 text-sm mt-3 leading-relaxed">
-            active merchants migrated from legacy desktop billing to Ubill POS, with historical catalogs and transactions intact.
+            {metrics.ubill.label}
           </p>
         </div>
 
         {/* Card 4: Feed 60 FPS */}
         <div className="card spot md:col-span-1 p-6 flex flex-col justify-between">
-          <div className="kicker">Feed</div>
+          <div className="kicker">{metrics.feed.kicker}</div>
           <div>
-            <div className="font-display font-extrabold text-5xl leading-none text-[#C5F560]">60</div>
-            <div className="text-zinc-400 text-sm mt-2 font-medium">FPS on budget phones</div>
+            <div className="font-display font-extrabold text-5xl leading-none text-[#C5F560]">
+              {metrics.feed.stat}
+            </div>
+            <div className="text-zinc-400 text-sm mt-2 font-medium">
+              {metrics.feed.label}
+            </div>
           </div>
         </div>
 
         {/* Card 5: Selfitoons Video Pipeline */}
         <div className="card spot md:col-span-4 p-7">
-          <div className="kicker">How the Selfitoons video pipeline works</div>
+          <div className="kicker">{metrics.pipeline.kicker}</div>
           <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-2.5 font-mono text-[12px] sm:text-[12.5px]">
-            <span className="chip !text-zinc-200 !px-3 !py-1.5">🎙 voice prompt</span>
-            <span className="text-zinc-600 font-bold">→</span>
-            <span className="chip !px-3 !py-1.5">Whisper transcript</span>
-            <span className="text-zinc-600 font-bold">→</span>
-            <span className="chip !px-3 !py-1.5">ChatGPT image edit</span>
-            <span className="text-zinc-600 font-bold">→</span>
-            <span className="chip !px-3 !py-1.5">Pydantic choreography</span>
-            <span className="text-zinc-600 font-bold">→</span>
-            <span className="chip !px-3 !py-1.5 !border-[#45E3FF]/40 !text-[#45E3FF]">Kling / Grok</span>
-            <span className="text-zinc-600 font-bold">→</span>
-            <span className="chip !px-3 !py-1.5 !bg-[#C5F560] !text-[#07080B] !border-[#C5F560] font-bold">
-              🎬 video
-            </span>
+            {metrics.pipeline.steps.map((step, idx) => (
+              <span key={idx} className="flex items-center gap-2 sm:gap-2.5">
+                <span
+                  className={`chip !px-3 !py-1.5 ${
+                    step.primary
+                      ? "!bg-[#C5F560] !text-[#07080B] !border-[#C5F560] font-bold"
+                      : step.highlight
+                      ? "!border-[#45E3FF]/40 !text-[#45E3FF]"
+                      : "!text-zinc-200"
+                  }`}
+                >
+                  {step.label}
+                </span>
+                {idx < metrics.pipeline.steps.length - 1 && (
+                  <span className="text-zinc-600 font-bold">→</span>
+                )}
+              </span>
+            ))}
           </div>
           <p className="text-zinc-500 text-sm mt-5 leading-relaxed">
-            FastAPI microservice with Pydantic JSON schemas. Credits are locked while a video renders, deducted upon successful delivery, and safely refunded on failure.
+            {metrics.pipeline.description}
           </p>
         </div>
 
         {/* Card 6: Video Controller Pool */}
         <div className="card spot md:col-span-2 p-7 flex flex-col justify-between">
           <div>
-            <div className="kicker">Video controller pool</div>
+            <div className="kicker">{metrics.controllerPool.kicker}</div>
             <div className="mt-5 flex gap-1.5">
               <span className="h-9 flex-1 rounded-md bg-[#C5F560]"></span>
               <span className="h-9 flex-1 rounded-md bg-[#C5F560]/75"></span>
@@ -191,7 +207,7 @@ export default function Impact() {
             </div>
           </div>
           <p className="text-zinc-400 text-sm mt-4 leading-relaxed">
-            Strict circular pool of max 5 active player controllers, recycled continuously as users scroll. Zero memory leaks, zero Android hardware codec exhaustion crashes.
+            {metrics.controllerPool.description}
           </p>
         </div>
       </div>
