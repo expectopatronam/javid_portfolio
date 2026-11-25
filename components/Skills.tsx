@@ -6,7 +6,6 @@ import {
   Cpu,
   Layers,
   Cloud,
-  CreditCard,
   Video,
 } from "lucide-react";
 

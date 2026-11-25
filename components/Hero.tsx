@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Download, ArrowRight, FileText } from "lucide-react";
+import { PERSONAL_INFO, HERO_DATA } from "@/data/portfolio";
 
 export default function Hero() {
   return (
@@ -56,12 +57,12 @@ export default function Hero() {
             <a href="#apps" className="btn btn-ghost">
               Mobile apps
             </a>
-            <Link href="/resume" className="btn btn-ghost">
+            <Link href={PERSONAL_INFO.resumePage} className="btn btn-ghost">
               <FileText className="w-4 h-4 text-[#C5F560]" />
               <span>Resume</span>
             </Link>
             <a
-              href="/Javid_Akeel_Resume.pdf"
+              href={PERSONAL_INFO.resumePdf}
               download="Javid_Akeel_Resume.pdf"
               className="btn btn-ghost !p-2.5"
               title="Download PDF Resume directly"
@@ -143,38 +144,33 @@ export default function Hero() {
           {/* Floating Selfitoons live pipeline card */}
           <div className="absolute left-0 sm:-left-2 bottom-[4%] sm:bottom-[8%] z-20 w-[268px] rounded-2xl border border-white/10 bg-[#0B0D12]/90 backdrop-blur-xl p-4 shadow-2xl">
             <div className="kicker !text-[10.5px] flex items-center justify-between">
-              <span>selfitoons / pipeline</span>
+              <span>{HERO_DATA.pipelineTitle}</span>
               <span className="text-[#C5F560] font-semibold">● live</span>
             </div>
             <div className="mt-3 space-y-2 font-mono text-[12px]">
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 grid place-items-center rounded-md bg-white/5 text-[10px] text-zinc-400">
-                  01
-                </span>
-                <span className="text-zinc-300">voice note</span>
-                <span className="ml-auto text-zinc-500">Whisper</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 grid place-items-center rounded-md bg-white/5 text-[10px] text-zinc-400">
-                  02
-                </span>
-                <span className="text-zinc-300">edit selfie</span>
-                <span className="ml-auto text-zinc-500">ChatGPT</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 grid place-items-center rounded-md bg-white/5 text-[10px] text-zinc-400">
-                  03
-                </span>
-                <span className="text-zinc-300">10s script</span>
-                <span className="ml-auto text-zinc-500">Pydantic</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 grid place-items-center rounded-md bg-[#C5F560] text-[#07080B] text-[10px] font-bold">
-                  04
-                </span>
-                <span className="text-white font-medium">render video</span>
-                <span className="ml-auto text-[#45E3FF]">Kling · Grok</span>
-              </div>
+              {HERO_DATA.pipelineSteps.map((step) => (
+                <div key={step.step} className="flex items-center gap-2">
+                  <span
+                    className={`w-5 h-5 grid place-items-center rounded-md text-[10px] ${
+                      step.active
+                        ? "bg-[#C5F560] text-[#07080B] font-bold"
+                        : "bg-white/5 text-zinc-400"
+                    }`}
+                  >
+                    {step.step}
+                  </span>
+                  <span className={step.active ? "text-white font-medium" : "text-zinc-300"}>
+                    {step.label}
+                  </span>
+                  <span
+                    className={`ml-auto ${
+                      step.active ? "text-[#45E3FF]" : "text-zinc-500"
+                    }`}
+                  >
+                    {step.tool}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

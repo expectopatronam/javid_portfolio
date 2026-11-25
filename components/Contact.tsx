@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Copy, Check, Mail, ExternalLink, Download, FileText } from "lucide-react";
+import { Copy, Check, Mail, Download, FileText } from "lucide-react";
+import { PERSONAL_INFO, CONTACT_DATA, SOCIAL_LINKS } from "@/data/portfolio";
+import SocialIcon from "@/components/ui/SocialIcons";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
-  const email = "workwithakeel@gmail.com";
+  const email = PERSONAL_INFO.email;
 
   const handleCopy = async () => {
     try {
@@ -30,13 +32,13 @@ export default function Contact() {
       ></div>
 
       <div className="relative mx-auto max-w-4xl px-5 sm:px-8 py-28 sm:py-36 text-center">
-        <div className="kicker">05 — Contact</div>
+        <div className="kicker">{CONTACT_DATA.kicker}</div>
         <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[0.98] text-5xl sm:text-7xl mt-4 text-white">
-          Hiring for Flutter<br />
-          or mobile AI? <span className="grad-text">Let&apos;s talk.</span>
+          {CONTACT_DATA.titlePart1}<br />
+          {CONTACT_DATA.titlePart2} <span className="grad-text">{CONTACT_DATA.titleHighlight}</span>
         </h2>
         <p className="text-zinc-400 mt-6 text-lg">
-          Based in Chennai. Happy to work remote or relocate.
+          {CONTACT_DATA.subtitle}
         </p>
 
         {/* Copyable email pill */}
@@ -72,40 +74,29 @@ export default function Contact() {
           </a>
         </div>
 
-        {/* External links: LinkedIn, GitHub, Resume */}
+        {/* External links: LinkedIn, GitHub, WhatsApp, Resume */}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a
-            className="btn btn-ghost"
-            href="https://www.linkedin.com/in/javid-akeel/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.6 8.65 21 11.2 21 14.5V21h-4v-5.8c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.5-2.25 3.1V21H9z" />
-            </svg>
-            <span>LinkedIn</span>
-          </a>
+          {SOCIAL_LINKS.filter((s) => s.id !== "email").map((social) => (
+            <a
+              key={social.id}
+              className="btn btn-ghost"
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SocialIcon name={social.id} className="w-4 h-4" />
+              <span>{social.label}</span>
+            </a>
+          ))}
 
-          <a
-            className="btn btn-ghost"
-            href="https://github.com/expectopatronam"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 .5a11.5 11.5 0 00-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 015.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0012 .5z" />
-            </svg>
-            <span>GitHub</span>
-          </a>
-
-          <Link className="btn btn-ghost" href="/resume">
+          <Link className="btn btn-ghost" href={PERSONAL_INFO.resumePage}>
             <FileText className="w-4 h-4 text-[#C5F560]" />
             <span>Interactive Resume</span>
           </Link>
 
           <a
             className="btn btn-ghost"
-            href="/Javid_Akeel_Resume.pdf"
+            href={PERSONAL_INFO.resumePdf}
             download="Javid_Akeel_Resume.pdf"
           >
             <Download className="w-4 h-4 text-zinc-400" />

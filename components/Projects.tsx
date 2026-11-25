@@ -456,8 +456,8 @@ export default function Projects({ onColorChange }: ProjectsProps) {
               onMouseEnter={() => onColorChange?.(project.color)}
               className="group relative rounded-3xl border border-border/60 bg-card/85 dark:bg-card/90 backdrop-blur-xl p-6 sm:p-7 shadow-md hover:shadow-2xl hover:border-accent/50 transition-all duration-300 flex flex-col justify-between h-full"
               style={{
-                ["--project-accent" as any]: project.color,
-              }}
+                "--project-accent": project.color,
+              } as React.CSSProperties}
             >
               {/* Top Accent Strip */}
               <div

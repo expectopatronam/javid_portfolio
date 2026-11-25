@@ -2,111 +2,18 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { APPS, AppFilterTag } from "@/data/portfolio";
+import TechChip from "@/components/ui/TechChip";
 
-type FilterTag = "all" | "ai" | "fintech" | "community";
-
-interface AppItem {
-  id: string;
-  name: string;
-  category: string;
-  tags: FilterTag[];
-  description: string;
-  tech: string[];
-  gradient: string;
-  shotSrc: string;
-  iconSrc: string;
-  appStoreUrl?: string;
-  playStoreUrl?: string;
-  webUrl?: string;
-}
-
-const APPS: AppItem[] = [
-  {
-    id: "selfitoons",
-    name: "Selfitoons",
-    category: "Mobile AI · Viral Video Gen",
-    tags: ["ai"],
-    description:
-      "Turn a voice prompt and selfie into a 10-second animated video. Whisper transcription, ChatGPT prompt engineering, Kling and Grok rendering, local FFmpeg watermarking, and a pool of five video controllers so the feed never leaks memory.",
-    tech: ["Flutter", "FastAPI", "FFmpeg", "Kling AI", "Grok", "Whisper"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(124, 92, 255, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.doubletap.ai.selfitoons-1.png",
-    iconSrc: "/icons/com.doubletap.ai.selfitoons.png",
-    appStoreUrl: "https://apps.apple.com/in/app/selfitoons/id6758597947",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.doubletap.ai.selfitoons",
-    webUrl: "https://selfitoons.ai/",
-  },
-  {
-    id: "internsharks",
-    name: "Internsharks",
-    category: "Internship Discovery & Community",
-    tags: ["ai", "community"],
-    description:
-      "Internship discovery app with real-time student community, resume drop, saved applications, and push alerts. Clean Riverpod architecture and custom card deck swiping.",
-    tech: ["Flutter", "Riverpod", "Firebase", "REST", "Google Play"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(69, 227, 255, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.doubletap.internsharks.ai-1.png",
-    iconSrc: "/icons/com.doubletap.internsharks.ai.png",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai",
-    webUrl: "https://internsharks.ai/",
-  },
-  {
-    id: "fulupostore",
-    name: "Fulupo Store",
-    category: "Hyperlocal Merchant Ordering",
-    tags: ["community"],
-    description:
-      "Merchant order-taking app for regional stores with real-time order notifications, stock management, and customer messaging. Built for ultra-fast checkout on sub-$100 Android hardware.",
-    tech: ["Flutter", "BLoC", "WebSockets", "Firebase", "Play Store"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(197, 245, 96, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.doubletap.fulupostore-1.png",
-    iconSrc: "/icons/com.doubletap.fulupostore.png",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.doubletap.fulupostore",
-  },
-  {
-    id: "ubill",
-    name: "Ubill",
-    category: "Cloud POS & GST Invoicing",
-    tags: ["fintech"],
-    description:
-      "Full offline-first point-of-sale for retail shops. Bluetooth ESC/POS thermal printing, barcode scanning via camera, GST compliance, daily analytics, and multi-store synchronization.",
-    tech: ["Flutter", "GetX", "SQLite", "ESC/POS", "REST"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(255, 176, 32, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.ubill.tech-1.png",
-    iconSrc: "/icons/com.ubill.tech.png",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.ubill.tech",
-    webUrl: "https://app.ubill.tech/",
-  },
-  {
-    id: "bizstack",
-    name: "Bizstack",
-    category: "SME Operations & Ledger",
-    tags: ["fintech"],
-    description:
-      "Business ledger and payment reconciliation suite. Automated overdue customer reminders via WhatsApp, expense tracking, and instant PDF invoice generation on device.",
-    tech: ["Flutter", "Riverpod", "PDF Gen", "SQLite", "Razorpay"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(69, 227, 255, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.nativedesk.bizstack-1.png",
-    iconSrc: "/icons/com.nativedesk.bizstack.png",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.nativedesk.bizstack",
-  },
-  {
-    id: "marine_ninja",
-    name: "Marine Ninja",
-    category: "Maritime Engineering Companion",
-    tags: ["community"],
-    description:
-      "Offline field calculator and exam prep guide for marine engineers at sea. Interactive machinery schematics, formula lookup, and quiz engine functioning 100% offline.",
-    tech: ["Flutter", "SQLite", "Offline First", "Google Play"],
-    gradient: "radial-gradient(120% 90% at 50% 100%, rgba(124, 92, 255, 0.35), transparent 60%), linear-gradient(180deg, #0E1118, #0B0D12)",
-    shotSrc: "/shots/com.engine_room_ninja.marine_ninja-1.png",
-    iconSrc: "/icons/com.engine_room_ninja.marine_ninja.png",
-    playStoreUrl: "https://play.google.com/store/apps/details?id=com.engine_room_ninja.marine_ninja",
-  },
+const FILTER_OPTIONS: { id: AppFilterTag; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "ai", label: "AI" },
+  { id: "fintech", label: "Billing & POS" },
+  { id: "community", label: "Community" },
 ];
 
 export default function Apps() {
-  const [activeFilter, setActiveFilter] = useState<FilterTag>("all");
+  const [activeFilter, setActiveFilter] = useState<AppFilterTag>("all");
 
   const filteredApps = APPS.filter((app) => {
     if (activeFilter === "all") return true;
@@ -125,42 +32,21 @@ export default function Apps() {
             </h2>
           </div>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter apps">
-            <button
-              onClick={() => setActiveFilter("all")}
-              className={`filter-btn chip !text-[12.5px] !px-3.5 !py-1.5 transition cursor-pointer ${
-                activeFilter === "all" ? "bg-white text-[#07080B] font-semibold border-white" : ""
-              }`}
-              aria-pressed={activeFilter === "all"}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setActiveFilter("ai")}
-              className={`filter-btn chip !text-[12.5px] !px-3.5 !py-1.5 transition cursor-pointer ${
-                activeFilter === "ai" ? "bg-white text-[#07080B] font-semibold border-white" : ""
-              }`}
-              aria-pressed={activeFilter === "ai"}
-            >
-              AI
-            </button>
-            <button
-              onClick={() => setActiveFilter("fintech")}
-              className={`filter-btn chip !text-[12.5px] !px-3.5 !py-1.5 transition cursor-pointer ${
-                activeFilter === "fintech" ? "bg-white text-[#07080B] font-semibold border-white" : ""
-              }`}
-              aria-pressed={activeFilter === "fintech"}
-            >
-              Billing &amp; POS
-            </button>
-            <button
-              onClick={() => setActiveFilter("community")}
-              className={`filter-btn chip !text-[12.5px] !px-3.5 !py-1.5 transition cursor-pointer ${
-                activeFilter === "community" ? "bg-white text-[#07080B] font-semibold border-white" : ""
-              }`}
-              aria-pressed={activeFilter === "community"}
-            >
-              Community
-            </button>
+            {FILTER_OPTIONS.map((filter) => {
+              const isActive = activeFilter === filter.id;
+              return (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={`filter-btn chip !text-[12.5px] !px-3.5 !py-1.5 transition cursor-pointer ${
+                    isActive ? "bg-white text-[#07080B] font-semibold border-white" : ""
+                  }`}
+                  aria-pressed={isActive}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -224,9 +110,7 @@ export default function Apps() {
                 {/* Tech Chips */}
                 <div className="flex flex-wrap gap-1.5 mt-5">
                   {app.tech.map((tag, tIdx) => (
-                    <span key={tIdx} className="chip">
-                      {tag}
-                    </span>
+                    <TechChip key={tIdx} label={tag} />
                   ))}
                 </div>
 
