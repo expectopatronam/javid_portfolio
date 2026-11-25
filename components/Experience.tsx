@@ -22,7 +22,7 @@ export default function Experience() {
 
           <div className="space-y-6">
             <div>
-              <div className="text-[12px] font-mono text-[#C5F560]">2022 — 2024</div>
+              <div className="text-[12px] font-mono text-[#C5F560]">2024 — 2026</div>
               <h3 className="font-display font-bold text-lg text-white mt-1">
                 Master of Computer Applications (MCA)
               </h3>
@@ -32,9 +32,9 @@ export default function Experience() {
             </div>
 
             <div className="pt-4 border-t border-white/[.06]">
-              <div className="text-[12px] font-mono text-[#45E3FF]">2019 — 2022</div>
+              <div className="text-[12px] font-mono text-[#45E3FF]">2020 — 2023</div>
               <h3 className="font-display font-bold text-lg text-white mt-1">
-                B.Sc in Information Technology
+                B.Sc in Computer Science
               </h3>
               <p className="text-zinc-400 text-sm mt-0.5">
                 Sadakathullah Appa College · Tirunelveli
@@ -59,7 +59,7 @@ export default function Experience() {
                 Mobile Application Developer
               </h3>
               <span className="chip !text-[12px] !border-[#C5F560]/30 !text-[#C5F560]">
-                2024 — Present
+                Dec 2025 — Present
               </span>
             </div>
             <div className="text-sm font-medium text-zinc-300 mt-1">
@@ -90,7 +90,7 @@ export default function Experience() {
                 Flutter Developer
               </h3>
               <span className="chip !text-[12px] !border-white/10 text-zinc-400">
-                2023 — 2024
+                Oct 2023 — Nov 2025
               </span>
             </div>
             <div className="text-sm font-medium text-zinc-300 mt-1">
