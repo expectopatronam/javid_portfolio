@@ -76,3 +76,12 @@ desktop.ini
 # Staging/scratch asset bundles (production assets live cleanly in /public/shots and /public/icons)
 public/portfolio-redesign/
 public/*.zip
+docs/assets/
+docs/design/
+
+# Inspiration and local reference media
+inspiration/
+*.mp4
+*.mov
+*.avi
+*.wmv

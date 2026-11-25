@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface SnapAvatarProps {
   color?: string;
@@ -75,9 +75,9 @@ export default function SnapAvatar({ color = "#6366f1" }: SnapAvatarProps) {
           }}
         />
 
-        {/* 3. High-Quality Snapchat avatar with translated parallax depth */}
+        {/* 3. High-Quality avatar with translated parallax depth */}
         <img
-          src="/javid-avatar.png"
+          src="/my-snapshot.jpg"
           alt="Javid Akeel Custom Avatar"
           className="w-[108%] h-[108%] object-cover object-center max-w-none transition-all duration-150 ease-out select-none pointer-events-none"
           style={{

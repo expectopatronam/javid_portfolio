@@ -1,44 +1,7 @@
 "use client";
 
-interface StackCategory {
-  title: string;
-  skills: string[];
-}
-
-const STACK_CATEGORIES: StackCategory[] = [
-  {
-    title: "Mobile",
-    skills: ["Flutter", "Dart", "Android SDK", "iOS Interop", "Jetpack Compose", "Clean Architecture"],
-  },
-  {
-    title: "State Management",
-    skills: ["Riverpod", "BLoC / Cubit", "GetX", "Provider", "Reactive State"],
-  },
-  {
-    title: "AI & GenAI",
-    skills: ["OpenAI API", "Whisper", "Kling AI", "Grok", "Prompt Engineering", "Pydantic Schemas", "LangChain"],
-  },
-  {
-    title: "Backend & APIs",
-    skills: ["FastAPI", "Python", "Node.js", "Express", "WebSockets", "RESTful APIs", "JWT Auth"],
-  },
-  {
-    title: "Data & Storage",
-    skills: ["SQLite", "Hive", "SharedPreferences", "MongoDB", "PostgreSQL", "Redis"],
-  },
-  {
-    title: "Cloud & DevOps",
-    skills: ["Firebase (Auth/Firestore/FCM)", "AWS S3 / EC2", "Docker", "GitHub Actions", "CI/CD"],
-  },
-  {
-    title: "Video, Audio & Hardware",
-    skills: ["FFmpeg on-device", "Video Controller Pool", "Bluetooth ESC/POS Printing", "Camera Barcode Scanning"],
-  },
-  {
-    title: "Store Shipping & Lifecycle",
-    skills: ["App Store Connect", "TestFlight", "Google Play Console", "Staged Rollouts", "Privacy Manifests"],
-  },
-];
+import { STACK_CATEGORIES } from "@/data/portfolio";
+import TechChip from "@/components/ui/TechChip";
 
 export default function TechStack() {
   return (
@@ -58,20 +21,15 @@ export default function TechStack() {
           {STACK_CATEGORIES.map((cat, idx) => (
             <div
               key={idx}
-              className="card spot p-6 sm:p-7 flex flex-col justify-between hover:border-[#C5F560]/30 transition-all duration-300"
+              className="card spot p-6 flex flex-col justify-between transition-all duration-300 hover:border-white/20"
             >
               <div>
-                <h3 className="font-display font-bold text-lg text-white mb-4">
+                <h3 className="font-display font-bold text-base text-white tracking-tight">
                   {cat.title}
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 mt-4">
                   {cat.skills.map((skill, sIdx) => (
-                    <span
-                      key={sIdx}
-                      className="chip !text-[12px] !text-zinc-300 !py-1 !px-2.5 hover:border-white/20 transition-colors"
-                    >
-                      {skill}
-                    </span>
+                    <TechChip key={sIdx} label={skill} />
                   ))}
                 </div>
               </div>
