@@ -153,25 +153,29 @@ export const HERO_DATA = {
 };
 
 export const MARQUEE_ITEMS: string[] = [
-  "Flutter",
-  "Dart",
-  "Riverpod",
-  "BLoC",
-  "GetX",
-  "FFmpeg",
-  "FastAPI",
+  "React",
+  "Next.js",
+  "TypeScript",
   "Node.js",
-  "OpenAI",
-  "Kling AI",
-  "Grok",
+  "NestJS",
+  "Python",
+  "FastAPI",
+  "Celery",
+  "PostgreSQL",
   "Redis",
   "MongoDB",
-  "Firebase",
-  "Jetpack Compose",
-  "AWS",
+  "Kubernetes",
   "Docker",
-  "TestFlight",
-  "Play Console",
+  "Terraform",
+  "Cloudflare R2",
+  "OpenAI",
+  "LangChain",
+  "Kling AI",
+  "Grok",
+  "YOLOv8",
+  "Flutter",
+  "Dart",
+  "FFmpeg",
 ];
 
 export const IMPACT_DATA = {
@@ -320,44 +324,30 @@ export const APPS: AppItem[] = [
 export const EXPERIENCES: ExperienceItem[] = [
   {
     id: "doubletap",
-    role: "Mobile Application Developer",
-    company: "Doubletap Innovations",
+    role: "Flutter Developer / Full-Stack & AI Engineer",
+    company: "Doubletap Innovations and Technologies",
     type: "Full-time",
     location: "Chennai",
     period: "Dec 2025 — Present",
     isCurrent: true,
     description:
-      "Leading mobile app development across flagship AI products. Built and launched Selfitoons (AI video generation with Whisper, ChatGPT, Kling AI, Grok & on-device FFmpeg) and Internsharks (internship & career network). Handled App Store & Play Store release operations, staged rollouts, and multi-tenant FastAPI backend integrations.",
-    tech: ["Flutter", "Riverpod", "FFmpeg", "FastAPI", "App Store", "Google Play"],
+      "Architected end-to-end mobile, web, backend, and GenAI pipelines across Selfitoons (Flutter + Node.js/PostgreSQL ACID credits + Redis + FastAPI/Celery on Kubernetes with Whisper, ChatGPT, LangChain/Pydantic, Grok/Kling AI, MongoDB checkpoints, Cloudflare R2, and ~75% client FFmpeg offload), Internsharks (Flutter & React AI Resume Builder, FastAPI ATS/OCR/MCQ workflows), and Fulupo Store (YOLOv8, OpenCLIP & OCR WebSocket POS). Owned App Store & Play Store releases across 5+ production apps.",
+    tech: ["Flutter", "React", "Node.js", "FastAPI", "Celery", "PostgreSQL", "Redis", "Kubernetes", "YOLOv8", "App Store"],
     dotColorClass: "border-[#C5F560] ring-[#C5F560]/20",
     badgeClass: "!border-[#C5F560]/30 !text-[#C5F560]",
   },
   {
     id: "ecfile",
-    role: "Flutter Developer",
-    company: "Ecfile Solutions Pvt Ltd",
+    role: "Flutter FullStack Developer",
+    company: "Ecfile Solutions",
     type: "Full-time",
     location: "Chennai",
     period: "Oct 2023 — Nov 2025",
     isCurrent: false,
     description:
-      "Engineered Ubill (cloud-synchronized POS billing system) and Bizstack. Implemented Bluetooth ESC/POS thermal printing drivers, camera barcode scanning, offline-first SQLite state caching, and automated ledger reporting for 650+ retail merchants.",
-    tech: ["Flutter", "GetX", "SQLite", "ESC/POS", "REST APIs"],
+      "Architected Ubill, a web-first Cloud Accounting & GST platform (Flutter Web/Desktop/Mobile + Node.js/Express/MongoDB). Built client-side PDF rendering via JS Interop reusing backend HTML/CSS templates (~50% less template effort), live multi-tier Indian GST computation (CGST/SGST vs. IGST), bulk Excel uploads, JWT/RBAC APIs, Nodemailer GST/invoice cron reminders, and a MongoDB migration script transferring 650+ users with full billing history intact.",
+    tech: ["Flutter Web", "JS Interop", "Node.js", "Express.js", "MongoDB", "JWT / RBAC", "Nodemailer"],
     dotColorClass: "border-[#45E3FF] ring-[#45E3FF]/20",
-    badgeClass: "!border-white/10 text-zinc-400",
-  },
-  {
-    id: "freelance",
-    role: "Mobile App Developer",
-    company: "Independent / Contract",
-    type: "Contract",
-    location: "Remote",
-    period: "2022 — 2023",
-    isCurrent: false,
-    description:
-      "Built and shipped Marine Ninja for maritime marine engineers, providing offline operational formulas and machinery inspection guides with zero network dependency. Built multiple client Flutter apps and reusable packages.",
-    tech: ["Flutter", "Offline First", "Dart", "UI/UX"],
-    dotColorClass: "border-zinc-500 ring-white/5",
     badgeClass: "!border-white/10 text-zinc-400",
   },
 ];
@@ -384,32 +374,32 @@ export const EDUCATION_SUMMARY =
 
 export const STACK_CATEGORIES: StackCategory[] = [
   {
-    title: "Mobile",
-    skills: ["Flutter", "Dart", "Android SDK", "iOS Interop", "Jetpack Compose", "Clean Architecture"],
-  },
-  {
-    title: "State Management",
-    skills: ["Riverpod", "BLoC / Cubit", "GetX", "Provider", "Reactive State"],
-  },
-  {
-    title: "AI & GenAI",
-    skills: ["OpenAI API", "Whisper", "Kling AI", "Grok", "Prompt Engineering", "Pydantic Schemas", "LangChain"],
+    title: "Web & Frontend",
+    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Flutter Web", "JS Interop", "HTML5 / CSS3"],
   },
   {
     title: "Backend & APIs",
-    skills: ["FastAPI", "Python", "Node.js", "Express", "WebSockets", "RESTful APIs", "JWT Auth"],
+    skills: ["Node.js", "Express.js", "NestJS", "FastAPI", "Django", "Celery", "Pydantic", "WebSockets"],
   },
   {
-    title: "Data & Storage",
-    skills: ["SQLite", "Hive", "SharedPreferences", "MongoDB", "PostgreSQL", "Redis"],
+    title: "AI, GenAI & Vision",
+    skills: ["OpenAI Whisper / GPT", "LangChain", "Kling AI", "Grok", "YOLOv8", "OpenCLIP", "OCR"],
+  },
+  {
+    title: "Mobile & State",
+    skills: ["Flutter", "Dart", "Jetpack Compose", "Kotlin", "Riverpod", "BLoC", "GetX", "Provider"],
+  },
+  {
+    title: "Databases & Caching",
+    skills: ["PostgreSQL", "MongoDB", "MySQL", "Redis", "Firebase RTDB", "RoomDB", "Hive", "SQLite"],
   },
   {
     title: "Cloud & DevOps",
-    skills: ["Firebase (Auth/Firestore/FCM)", "AWS S3 / EC2", "Docker", "GitHub Actions", "CI/CD"],
+    skills: ["AWS S3 / Cognito", "Google Cloud Run", "Cloudflare R2", "Docker", "Kubernetes", "Terraform", "CI/CD"],
   },
   {
-    title: "Video, Audio & Hardware",
-    skills: ["FFmpeg on-device", "Video Controller Pool", "Bluetooth ESC/POS Printing", "Camera Barcode Scanning"],
+    title: "Media, Payments & Auth",
+    skills: ["FFmpeg", "Video Controller Pool", "Razorpay", "Cashfree", "Play Billing", "JWT / RBAC", "ESC/POS"],
   },
   {
     title: "Store Shipping & Lifecycle",
@@ -419,8 +409,8 @@ export const STACK_CATEGORIES: StackCategory[] = [
 
 export const CONTACT_DATA = {
   kicker: "05 — Contact",
-  titlePart1: "Hiring for Flutter",
-  titlePart2: "or mobile AI?",
+  titlePart1: "Hiring for full-stack,",
+  titlePart2: "GenAI, or mobile?",
   titleHighlight: "Let's talk.",
   subtitle: "Based in Chennai. Happy to work remote or relocate.",
 };
