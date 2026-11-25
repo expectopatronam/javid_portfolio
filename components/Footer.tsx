@@ -1,27 +1,33 @@
-import { ArrowUp } from "lucide-react";
+import Link from "next/link";
+import { FileText, ArrowUp } from "lucide-react";
+import { PERSONAL_INFO, FOOTER_DATA } from "@/data/portfolio";
 
 export default function Footer() {
   return (
-    <footer className="py-12 bg-background border-t border-border/10">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Copy details */}
-        <div className="text-center md:text-left">
-          <p className="text-sm font-medium text-foreground mb-1">
-            © {new Date().getFullYear()} Javid Akeel. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Built with Next.js, TypeScript, and Tailwind CSS.
-          </p>
+    <footer className="relative border-t border-white/[.07] bg-[#07080B]">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-6 flex flex-col sm:flex-row gap-3 items-center justify-between text-[13px] text-zinc-500">
+        <div className="flex items-center gap-4">
+          <span>{FOOTER_DATA.copyright}</span>
+          <span>·</span>
+          <Link
+            href={PERSONAL_INFO.resumePage}
+            className="text-zinc-400 hover:text-[#C5F560] transition inline-flex items-center gap-1 font-medium"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Resume (Viewer &amp; PDF)</span>
+          </Link>
         </div>
 
-        {/* Scroll back to top */}
-        <a
-          href="#home"
-          className="p-3 rounded-xl border border-border bg-card hover:bg-muted/10 text-muted-foreground hover:text-accent hover:border-accent/30 transition-all shadow-sm"
-          aria-label="Scroll back to top"
-        >
-          <ArrowUp className="w-4 h-4 animate-bounce" />
-        </a>
+        <div className="flex items-center gap-4">
+          <span className="font-mono">{FOOTER_DATA.builtWith}</span>
+          <a
+            href="#top"
+            className="p-1.5 rounded-full border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition"
+            title="Back to top"
+          >
+            <ArrowUp className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
     </footer>
   );

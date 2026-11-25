@@ -1,101 +1,80 @@
-import { Briefcase, Calendar, MapPin } from "lucide-react";
+"use client";
 
-const EXPERIENCES = [
-  {
-    role: "Flutter Developer",
-    company: "Doubletap Innovations and Technologies",
-    location: "Chennai, India",
-    period: "Dec 2025 – Present",
-    highlights: [
-      "Developed Selfitoons, an AI-powered video generation and social media mobile application for Android and iOS.",
-      "Architected a high-performance social feed with followers, following, likes, comments, and post functionalities using Riverpod and GoRouter.",
-      "Integrated Razorpay and Cashfree payment gateways to handle seamless premium subscriptions and transactions.",
-      "Implemented client-side video watermarking via FFmpeg, reducing server-side processing costs and CPU load by 75%.",
-      "Designed and built a Video Controller Manager maintaining only 5 active controllers, significantly improving memory usage and performance in feed-based video playback.",
-    ],
-    tech: ["Flutter", "Dart", "Riverpod", "GoRouter", "FFmpeg", "Razorpay", "Cashfree", "Android", "iOS"],
-  },
-  {
-    role: "Flutter FullStack Developer",
-    company: "Ecfile Solutions (Ubill – Accounting & GST Software)",
-    location: "Chennai, India",
-    period: "Oct 2023 – Aug 2025",
-    highlights: [
-      "Contributed 40,000+ lines of production code across Flutter mobile/web apps, Node.js services, and MongoDB database layer.",
-      "Architected a web-first responsive Flutter application for Ubill to ensure cross-platform compatibility.",
-      "Built a PDF invoice generator using JS Interop to reuse backend HTML templates directly, improving generation speed by 50%.",
-      "Developed Node.js + MongoDB backend with secure custom authentication pipelines.",
-      "Implemented architectures using GetX, Riverpod, and Provider for state management, with local storage via Hive.",
-    ],
-    tech: ["Flutter", "Dart", "Node.js", "MongoDB", "GetX", "Riverpod", "Provider", "Hive", "JS Interop"],
-  },
-];
+import { GraduationCap } from "lucide-react";
+import { EXPERIENCES, EDUCATION_ITEMS, EDUCATION_SUMMARY } from "@/data/portfolio";
+import TechChip from "@/components/ui/TechChip";
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-20 border-b border-border/10">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
-        <div className="flex flex-col items-start mb-12">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Work Experience</h2>
-          <div className="w-12 h-1 bg-accent rounded-full mb-4" />
-          <p className="text-muted-foreground max-w-xl">
-            A history of building production-grade mobile applications and full-stack software products in fast-paced teams.
+    <section id="experience" className="relative mx-auto max-w-6xl px-5 sm:px-8 py-24 sm:py-32">
+      <div>
+        <div className="kicker">03 — Experience</div>
+        <h2 className="font-display font-bold tracking-tight text-4xl sm:text-5xl mt-3 text-white">
+          Where I&apos;ve been building.
+        </h2>
+      </div>
+
+      <div className="mt-12 grid md:grid-cols-[1fr_1.8fr] gap-8 items-start">
+        {/* Left: Education Card */}
+        <div className="card spot p-7 sm:p-8 flex flex-col gap-6">
+          <div className="flex items-center gap-2.5">
+            <GraduationCap className="w-5 h-5 text-[#C5F560]" />
+            <span className="kicker !text-[12px]">Education &amp; Roots</span>
+          </div>
+
+          <div className="space-y-6">
+            {EDUCATION_ITEMS.map((item, idx) => (
+              <div
+                key={idx}
+                className={idx > 0 ? "pt-4 border-t border-white/[.06]" : ""}
+              >
+                <div className={`text-[12px] font-mono ${item.colorClass}`}>
+                  {item.period}
+                </div>
+                <h3 className="font-display font-bold text-lg text-white mt-1">
+                  {item.degree}
+                </h3>
+                <p className="text-zinc-400 text-sm mt-0.5">
+                  {item.institution} · {item.location}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-zinc-500 text-sm pt-4 border-t border-white/[.06] leading-relaxed">
+            {EDUCATION_SUMMARY}
           </p>
         </div>
 
-        {/* Timeline Layout */}
-        <div className="relative border-l-2 border-border/50 ml-4 md:ml-6 pl-6 md:pl-10 py-2 space-y-12">
-          {EXPERIENCES.map((exp, index) => (
-            <div key={exp.company + index} className="relative group">
-              {/* Timeline Indicator Dot */}
-              <span className="absolute -left-[35px] md:-left-[51px] top-1.5 flex items-center justify-center w-8 h-8 rounded-full border border-border bg-card text-accent group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300 shadow-sm">
-                <Briefcase className="w-4 h-4" />
-              </span>
+        {/* Right: Experience Timeline with Glowing Line */}
+        <div className="relative pl-6 sm:pl-8 border-l-2 border-white/10 space-y-12 before:absolute before:left-[-2px] before:top-0 before:bottom-0 before:w-[2px] before:bg-gradient-to-b before:from-[#C5F560] before:via-[#45E3FF] before:to-transparent">
+          {EXPERIENCES.map((job) => (
+            <div key={job.id} className="relative">
+              {/* Timeline node dot */}
+              <span
+                className={`absolute left-[-31px] sm:left-[-39px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#07080B] border-2 ring-4 ${job.dotColorClass}`}
+              ></span>
 
-              {/* Content Card */}
-              <div className="p-6 md:p-8 rounded-2xl border border-border bg-card/60 backdrop-blur-sm hover:border-accent/30 transition-colors shadow-sm">
-                {/* Meta details */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
-                      {exp.role}
-                    </h3>
-                    <h4 className="text-base font-semibold text-muted">{exp.company}</h4>
-                  </div>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="font-display font-bold text-xl text-white">
+                  {job.role}
+                </h3>
+                <span className={`chip !text-[12px] ${job.badgeClass || ""}`}>
+                  {job.period}
+                </span>
+              </div>
+              <div className="text-sm font-medium text-zinc-300 mt-1">
+                {job.company} · {job.type} · {job.location}
+              </div>
 
-                  <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {exp.period}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {exp.location}
-                    </span>
-                  </div>
-                </div>
+              <p className="text-zinc-400 text-sm sm:text-[15px] mt-4 leading-relaxed">
+                {job.description}
+              </p>
 
-                {/* Highlights List */}
-                <ul className="space-y-3 mb-6 text-sm sm:text-base text-muted-foreground list-disc pl-5 marker:text-accent">
-                  {exp.highlights.map((highlight, hIndex) => (
-                    <li key={hIndex} className="leading-relaxed">
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Tech Badges */}
-                <div className="flex flex-wrap gap-1.5 pt-4 border-t border-border/30">
-                  {exp.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-accent/5 text-accent border border-accent/10"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-1.5 mt-4">
+                {job.tech.map((techItem, tIdx) => (
+                  <TechChip key={tIdx} label={techItem} />
+                ))}
               </div>
             </div>
           ))}

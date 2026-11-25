@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { PERSONAL_INFO } from "@/data/portfolio";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Javid Akeel | Flutter & Full-Stack Developer",
-  description: "Portfolio of Javid Akeel, a Flutter and Full-Stack Developer specializing in high-performance mobile apps, web applications, and scalable backend architectures.",
-  keywords: ["Javid Akeel", "Flutter Developer", "Full Stack Developer", "Next.js", "React", "Mobile App Developer", "iOS Developer", "Android Developer", "Node.js", "Dart", "Bizstack", "Selfitoons", "Ubill"],
+  title: `${PERSONAL_INFO.name} | ${PERSONAL_INFO.role}`,
+  description: `Portfolio of ${PERSONAL_INFO.name}, a ${PERSONAL_INFO.role} specializing in Mobile & Generative AI applications (Flutter, Node.js, Python), video processing pipelines, and cloud architectures.`,
+  keywords: [
+    "Javid Akeel",
+    "Flutter Developer",
+    "Mobile Engineer",
+    "Generative AI",
+    "Full Stack Developer",
+    "Next.js",
+    "React",
+    "iOS Developer",
+    "Android Developer",
+    "Node.js",
+    "Python",
+    "Dart",
+    "Bizstack",
+    "Selfitoons",
+    "Ubill",
+    "Internsharks",
+    "Fulupo Store",
+  ],
 };
 
 export default function RootLayout({

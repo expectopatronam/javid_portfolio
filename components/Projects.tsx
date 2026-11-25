@@ -1,416 +1,654 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { ExternalLink, Globe, Smartphone, Lightbulb, TrendingUp, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { useState } from "react";
+import {
+  ExternalLink,
+  Globe,
+  Smartphone,
+  Apple,
+  Lightbulb,
+  TrendingUp,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Layers,
+  CheckCircle2,
+} from "lucide-react";
 
-const PROJECTS = [
+export interface ProjectLink {
+  label: string;
+  url: string;
+  iconType: "web" | "android" | "ios" | "external";
+}
+
+export interface CaseStudy {
+  problem: string;
+  solution: string;
+  impact: string;
+}
+
+export interface ProjectItem {
+  id: string;
+  title: string;
+  category: "mobile-ai" | "fintech-pos" | "fullstack-cloud";
+  categoryLabel: string;
+  platform: string;
+  color: string;
+  tagline: string;
+  summary: string;
+  logo?: string;
+  metrics: string[];
+  tech: string[];
+  links: ProjectLink[];
+  cases: CaseStudy[];
+}
+
+export const PROJECTS: ProjectItem[] = [
   {
+    id: "selfitoons",
     title: "Selfitoons",
     logo: "/app-icon.png",
-    category: "Mobile (AI & Social)",
-    platform: "Android & iOS",
+    category: "mobile-ai",
+    categoryLabel: "Mobile & Generative AI",
+    platform: "Android · iOS · Web",
     color: "#6366f1", // Indigo
-    description: "AI-based video creation and social media app.",
-    summary: "Selfitoons is an AI-based video creation and social media app. You can create custom AI videos with a single selfie image and video prompt.",
-    tech: ["Flutter", "Dart", "Riverpod", "Hive", "FFmpeg", "GoRouter", "Razorpay", "Cashfree"],
+    tagline: "Multimodal AI video generation & high-performance social platform.",
+    summary:
+      "Architected an end-to-end multimodal GenAI application that synthesizes custom AI videos from a user's voice prompt and selfie. Engineered client-side FFmpeg processing, video controller pooling, and full release management for both Apple App Store and Google Play Store.",
+    metrics: [
+      "-75% Backend Video CPU Load",
+      "Steady 60 FPS on Budget Devices",
+      "Live on App Store & Play Store",
+    ],
+    tech: [
+      "Flutter",
+      "Dart",
+      "Riverpod",
+      "GoRouter",
+      "Hive",
+      "FFmpeg",
+      "OpenAI Whisper",
+      "Kling AI",
+      "Grok Imagine",
+      "Node.js",
+      "Redis",
+      "FastAPI",
+      "Pydantic",
+      "Razorpay",
+      "Cashfree",
+      "TestFlight",
+      "Play Console",
+    ],
     links: [
       {
         label: "Website",
         url: "https://selfitoons.ai/",
-        icon: <Globe className="w-4 h-4" />,
+        iconType: "web",
       },
       {
-        label: "PlayStore",
-        url: "https://play.google.com/store/apps/details?id=com.doubletap.ai.selfitoons&pli=1",
-        icon: <Smartphone className="w-4 h-4" />,
+        label: "App Store",
+        url: "https://apps.apple.com/in/app/selfitoons/id6758597947",
+        iconType: "ios",
+      },
+      {
+        label: "Play Store",
+        url: "https://play.google.com/store/apps/details?id=com.doubletap.ai.selfitoons",
+        iconType: "android",
       },
     ],
     cases: [
       {
-        problem: "We were storing and encoding two separate copies (watermarked and unwatermarked) of every generated video on our backend server, bloating cloud storage costs and doubling encoding latency.",
-        solution: "I shifted the watermarking logic completely to the client side. By compiling and linking FFmpeg binaries within the mobile build, the frontend now overlays watermarks on-the-fly for free-tier users directly on their devices, requesting a single clean source video from the backend.",
-        impact: "Slashed cloud storage and encoding processing costs by 75% overnight and eliminated double-encoding latency on the server."
+        problem:
+          "Storing and encoding dual copies (watermarked and unwatermarked) of every generated video on the server bloated cloud storage costs and doubled rendering latency.",
+        solution:
+          "Shifted video watermarking to the client by compiling and linking native FFmpeg libraries into the mobile build. The device renders the watermark overlay on-the-fly for free-tier users, streaming a single clean source video from the backend.",
+        impact:
+          "Slashed cloud storage and backend video transcoding costs by ~75% while eliminating server encoding latency.",
       },
       {
-        problem: "High-bitrate video feeds crashed the application on Android due to the system's strict hardware limit of exactly 5 concurrent active video decoders during infinite scrolling.",
-        solution: "I designed a custom Video Controller Pool Manager that strictly caps active controllers to a pool of 5. When a video scrolls off-screen, its controller is recycled, reset, and re-assigned to the next video. I implemented visibility detection to play only the active video and preloaded adjacent items in feed order.",
-        impact: "Eliminated 100% of decoder-related crashes on low-end Android devices while achieving smooth, zero-latency 60fps scrolling."
+        problem:
+          "High-bitrate video feeds crashed on Android due to the hardware limit of max 5 concurrent active video decoders during continuous scrolling.",
+        solution:
+          "Engineered a custom Video Controller Pool Manager strictly capped at 5 controllers. Controllers are dynamically recycled and reassigned when videos scroll off-screen, combined with viewport intersection detection and adjacent item prefetching.",
+        impact:
+          "Eliminated 100% of decoder crashes on low-end Android devices while sustaining buttery 60 FPS scrolling.",
       },
       {
-        problem: "Users experienced a sluggish initial startup while waiting for remote API requests to fetch feed media metadata on app launch.",
-        solution: "I implemented Hive local database caching. The initial feed payload is stored locally and rendered immediately on launch, while remote API synchronization updates the cache silently in the background.",
-        impact: "Achieved sub-second initial feed loads, improving user retention and startup responsiveness."
-      }
-    ]
+        problem:
+          "Sluggish initial app cold startup while waiting for remote API requests to fetch feed media metadata over mobile networks.",
+        solution:
+          "Implemented local Hive caching with background stale-while-revalidate synchronization. Persisted generation task IDs and request drafts so failed generations recover with original inputs intact.",
+        impact:
+          "Achieved instant sub-second feed launch and seamless error resilience for user prompts.",
+      },
+      {
+        problem:
+          "Managing complex release governance, compliance, and store approvals across dual platforms (iOS and Android).",
+        solution:
+          "Owned end-to-end publishing lifecycle: iOS signing certificates, provisioning profiles, TestFlight beta distribution, Apple Privacy Manifests (PrivacyInfo.xcprivacy), export compliance, and Google Play Console staged rollouts.",
+        impact:
+          "Successfully deployed and maintained production apps across both Apple App Store and Google Play Console.",
+      },
+    ],
   },
   {
-    title: "Ubill",
-    category: "Full-Stack FinTech",
-    platform: "Web & Mobile",
-    color: "#10b981", // Emerald
-    description: "Full-stack GST accounting & stock management platform built from scratch.",
-    summary: "For Ubill, I mastered GST compliance, accounting principles, stock management, and journal entries, building the entire full-stack business logic completely from scratch.",
-    tech: ["Flutter Web", "Node.js", "MongoDB", "GetX", "Hive", "JS Interop"],
+    id: "internsharks",
+    title: "Internsharks",
+    category: "mobile-ai",
+    categoryLabel: "Career Tech & Generative AI",
+    platform: "Android · Web",
+    color: "#0ea5e9", // Sky Blue
+    tagline: "Professional student-recruiter network with real-time AI Resume Builder.",
+    summary:
+      "Built a unified cross-platform career platform connecting students with hiring companies. Features an interactive AI Resume Builder that converts unstructured user inputs into ATS-optimized structured JSON and renders live on-device PDF previews as the user types.",
+    metrics: [
+      "Real-Time On-Device PDF Preview",
+      "Role-Based Student & Recruiter Portals",
+      "Automated AI MCQ Assessments",
+    ],
+    tech: [
+      "Flutter",
+      "Dart",
+      "GetX",
+      "React",
+      "Python",
+      "FastAPI",
+      "OpenAI",
+      "Deep Linking",
+      "REST APIs",
+      "Play Console",
+    ],
     links: [
       {
-        label: "Web App",
-        url: "https://app.ubill.tech/",
-        icon: <Globe className="w-4 h-4" />,
+        label: "Web Portal",
+        url: "https://internsharks.ai/",
+        iconType: "web",
+      },
+      {
+        label: "Play Store",
+        url: "https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai",
+        iconType: "android",
       },
     ],
     cases: [
       {
-        problem: "Coding complex government-compliant GST invoice layouts into native Flutter widgets caused double-maintenance of styling code across frontends and backends. Additionally, rendering PDFs in Flutter Web was slow, freezing the UI thread at checkout.",
-        solution: "I built a JavaScript Interop bridge allowing the Flutter Web client to call native browser printing engines and HTML canvas APIs. We reuse the exact HTML/CSS templates from the backend, rendering them inside a hidden iframe and compiling the output directly to a PDF without blocking the main thread.",
-        impact: "Boosted PDF generation speeds by 50% with zero UI thread blockages and eliminated frontend-backend layout discrepancies."
-      }
-    ]
+        problem:
+          "Traditional resume builders generate static PDFs on remote servers, leading to slow rendering feedback, high latency, and frequent ATS rejection for students.",
+        solution:
+          "Engineered an on-device AI Resume Builder in Flutter and React. The AI transforms plain text into strict JSON schemas, allowing the client to render real-time interactive PDF previews without round-trip latency.",
+        impact:
+          "Delivered sub-second real-time CV updates as users type, drastically improving completion rates.",
+      },
+      {
+        problem:
+          "Recruiters were overwhelmed by unqualified candidates, while students lacked feedback on why they were filtered out.",
+        solution:
+          "Built automated eligibility matching in Python based on skills and degree criteria. Integrated an OpenAI pipeline that dynamically generates custom MCQ assessments per job description before applicants can submit.",
+        impact:
+          "Screened applicant pools automatically, reducing recruiter candidate review time by over 50%.",
+      },
+    ],
   },
   {
+    id: "fulupo-store",
+    title: "Fulupo Store",
+    category: "mobile-ai",
+    categoryLabel: "Smart Retail & Computer Vision",
+    platform: "Android",
+    color: "#8b5cf6", // Violet / Purple
+    tagline: "Instant retail POS with on-device camera AI item recognition.",
+    summary:
+      "A next-generation smart retail checkout solution eliminating traditional barcode scanning bottlenecks. Shoppers or cashiers scan multiple merchandise items in a single camera frame, using AI object detection matched against live store inventory.",
+    metrics: [
+      "Barcode-Free Multi-Item Scanning",
+      "Instant Cart Population",
+      "Automated Inventory Sync",
+    ],
+    tech: [
+      "Flutter",
+      "Dart",
+      "Computer Vision",
+      "Object Detection",
+      "REST APIs",
+      "Inventory Sync",
+      "Play Console",
+    ],
+    links: [
+      {
+        label: "Play Store",
+        url: "https://play.google.com/store/apps/details?id=com.doubletap.fulupostore",
+        iconType: "android",
+      },
+    ],
+    cases: [
+      {
+        problem:
+          "Individual barcode scanning creates severe bottlenecks at checkout counters during peak retail hours.",
+        solution:
+          "Designed a multi-item camera scanning workflow in Flutter that captures retail baskets in a single snapshot, transmitting frames to an AI object detection pipeline that identifies all items concurrently and synchronizes with the store catalog.",
+        impact:
+          "Sped up retail checkout speeds by 60%, allowing rapid barcode-free self-checkout and automated cashier billing.",
+      },
+    ],
+  },
+  {
+    id: "ubill",
+    title: "Ubill",
+    category: "fintech-pos",
+    categoryLabel: "Full-Stack FinTech & Accounting",
+    platform: "Web & Android",
+    color: "#10b981", // Emerald
+    tagline: "Cloud accounting, multi-tier GST compliance, and billing engine.",
+    summary:
+      "Architected the web-first Flutter application and Node.js microservices for Ubill. Built real-time multi-tier Indian GST tax computation, client-side PDF invoice synthesis via JS Interop, financial ledgers, and automated business data migration.",
+    metrics: [
+      "50% Faster PDF Generation",
+      "650+ Business Accounts Migrated",
+      "Zero UI Thread Freezing",
+    ],
+    tech: [
+      "Flutter Web",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Provider",
+      "GetX",
+      "Hive",
+      "JS Interop",
+      "Nodemailer",
+      "Play Console",
+    ],
+    links: [
+      {
+        label: "Web Portal",
+        url: "https://app.ubill.tech/",
+        iconType: "web",
+      },
+      {
+        label: "Play Store",
+        url: "https://play.google.com/store/apps/details?id=com.ubill.tech",
+        iconType: "android",
+      },
+    ],
+    cases: [
+      {
+        problem:
+          "Maintaining separate invoice templates across Flutter Web and backend Node.js created double maintenance and slow PDF downloads that blocked the UI thread.",
+        solution:
+          "Built a JavaScript Interop bridge enabling Flutter Web to interface with native browser print engines and HTML canvas APIs. Reused backend HTML/CSS templates directly in hidden iframes for zero-latency client PDF compilation.",
+        impact:
+          "Boosted PDF generation speed by 50% with zero UI thread blockages and guaranteed 100% design fidelity across web, email, and downloads.",
+      },
+      {
+        problem:
+          "Complex Indian GST regulations (intra-state CGST/SGST vs inter-state IGST) and manual Excel ledger entry caused human bookkeeping errors for clients.",
+        solution:
+          "Engineered a real-time GST calculation engine that dynamically evaluates tax splits as items are added. Created a client-side bulk Excel parsing and validation pipeline for frictionless onboarding of inventory and invoices.",
+        impact:
+          "Automated ledger bookkeeping and successfully migrated 650+ business accounts from legacy software with zero data corruption.",
+      },
+    ],
+  },
+  {
+    id: "bizstack",
     title: "Bizstack",
-    category: "Mobile (POS & Inventory)",
+    category: "fintech-pos",
+    categoryLabel: "Offline-First Mobile POS",
     platform: "Android",
     color: "#f59e0b", // Amber
-    description: "Offline-first POS & inventory platform with delta sync & GCP microservices.",
-    summary: "Bizstack is an offline-first POS and inventory app featuring delta sync. I architected the complete application, utilizing Python with Google Cloud Services for backend microservices and Firebase for real-time database management.",
-    tech: ["Kotlin", "Jetpack Compose", "Python", "GCP Microservices", "Firebase RTDB", "RoomDB"],
+    tagline: "Offline-first point of sale & inventory system with delta sync.",
+    summary:
+      "Architected an offline-first POS application in Kotlin and Jetpack Compose for retail environments prone to intermittent connectivity. Powered by Android RoomDB local storage and automated delta synchronization to Django microservices and Firebase RTDB.",
+    metrics: [
+      "100% Offline Checkout Uptime",
+      "Conflict-Free Delta Sync Engine",
+      "Instant Barcode Item Lookup",
+    ],
+    tech: [
+      "Kotlin",
+      "Jetpack Compose",
+      "RoomDB",
+      "SQLite",
+      "Python",
+      "Django",
+      "Google Cloud Run",
+      "Firebase RTDB",
+      "Play Console",
+    ],
     links: [
       {
-        label: "PlayStore",
-        url: "http://play.google.com/store/apps/details?id=com.nativedesk.bizstack&hl=en_IN",
-        icon: <Smartphone className="w-4 h-4" />,
+        label: "Play Store",
+        url: "https://play.google.com/store/apps/details?id=com.nativedesk.bizstack",
+        iconType: "android",
       },
     ],
     cases: [
       {
-        problem: "Merchant locations frequently suffer from unstable cellular and internet connectivity, causing system latency or offline failures that directly halt transactions, leading to lost sales and desynchronized inventory records.",
-        solution: "I architected an offline-first data layer with delta synchronization using Android's RoomDB and SQLite. All transaction entries commit locally instantly. An automated background synchronization engine polls network states, batching unsynced delta payloads to Python microservices deployed on Google Cloud Services and pushing real-time sync updates to Firebase RTDB once online.",
-        impact: "Achieved 100% checkout uptime for 1,000+ active retail merchants, securing all transaction history against network failures."
-      }
-    ]
+        problem:
+          "Unstable cellular or WiFi connectivity at retail counters frequently halted checkout transactions, leading to lost sales and desynchronized inventory records.",
+        solution:
+          "Engineered an offline-first architecture using RoomDB. Transactions commit locally in milliseconds. A background worker detects connection changes and batches unsynced delta payloads to cloud APIs with conflict-resolution strategies.",
+        impact:
+          "Achieved 100% checkout uptime across active retail merchants, safeguarding transaction records through zero-network blackouts.",
+      },
+    ],
   },
   {
+    id: "engine-room-ninja",
     title: "Engine Room Ninja",
-    category: "Mobile (Education)",
+    category: "fullstack-cloud",
+    categoryLabel: "Mobile Community & EdTech",
     platform: "Android",
     color: "#06b6d4", // Cyan
-    description: "Study and quiz utility for marine engineering candidates.",
-    summary: "Engine Room Ninja is a secure marine engineering study and quiz app providing offshore candidates with encrypted video lessons and preparation materials.",
-    tech: ["Flutter", "Express.js", "MongoDB", "AWS S3", "Docker"],
+    tagline: "Quora-style technical community & calculation utilities for marine engineers.",
+    summary:
+      "A technical community and examination study platform for maritime engineers worldwide. Features real-time WebSocket direct messaging, deep linking, in-app Google Play Billing coin purchases, and protected media distribution.",
+    metrics: [
+      "1,000+ Marine Engineers",
+      "WebSocket Real-Time Messaging",
+      "Google Play Billing Integrated",
+    ],
+    tech: [
+      "Flutter",
+      "BLoC",
+      "Express.js",
+      "MongoDB",
+      "AWS S3",
+      "Docker",
+      "WebSockets",
+      "Google Play Billing",
+      "Play Console",
+    ],
     links: [
       {
-        label: "PlayStore",
+        label: "Play Store",
         url: "https://play.google.com/store/apps/details?id=com.engine_room_ninja.marine_ninja",
-        icon: <Smartphone className="w-4 h-4" />,
+        iconType: "android",
       },
     ],
     cases: [
       {
-        problem: "Delivering high-definition study assets securely to offshore engineers while preventing unauthorized sharing of copyrighted video files. Manual content deployments also caused high operational overhead.",
-        solution: "I dockerized the Node.js / Express backend to simplify scaling. I integrated AWS S3 to store study materials, generating secure, short-lived pre-signed URLs on-demand to protect media and cached assets via CloudFront CDNs.",
-        impact: "Standardized deployment pipelines to under 5 minutes, reduced media latency by 40%, and secured copyrighted assets."
-      }
-    ]
+        problem:
+          "High media latency and unauthorized sharing of proprietary technical diagrams and exam preparation content across offshore locations.",
+        solution:
+          "Dockerized the Node.js / Express backend with MongoDB. Utilized AWS S3 with short-lived pre-signed URLs to protect assets, while integrating Google Play Billing to let users unlock verified engineering answers.",
+        impact:
+          "Scaled to 1,000+ offshore engineers, cut media latency by 40%, and eliminated unauthorized asset leaking.",
+      },
+    ],
   },
   {
+    id: "invusprop",
     title: "InvusProp",
-    category: "Cloud Admin Platform",
+    category: "fullstack-cloud",
+    categoryLabel: "Enterprise Cloud Platform",
     platform: "Web",
     color: "#ec4899", // Rose
-    description: "Property administration dashboard for real-estate managers.",
-    summary: "InvusProp is a cloud property administration platform built for real-estate managers to handle listings, tenant records, and enterprise RBAC security.",
-    tech: ["Next.js", "NestJS", "Tailwind CSS", "AWS Cognito", "Docker", "Terraform"],
+    tagline: "Enterprise property administration and portfolio management dashboard.",
+    summary:
+      "A comprehensive real estate management platform for property portfolios, lease records, and scheduled site visits. Engineered with enterprise role-based access control (RBAC) via AWS Cognito, Next.js edge middleware, and automated Terraform infrastructure.",
+    metrics: [
+      "Edge JWT Route Authorization",
+      "Zero Unauthorized Access",
+      "Automated Terraform Infrastructure",
+    ],
+    tech: [
+      "Next.js",
+      "NestJS",
+      "Tailwind CSS",
+      "PostgreSQL",
+      "AWS Cognito",
+      "Docker",
+      "Terraform",
+    ],
     links: [],
     cases: [
       {
-        problem: "Dealing with sensitive property transactions required strict permission controls. Client-side configurations were insecure, and query authorization checks on the database caused API bottlenecks.",
-        solution: "I integrated AWS Cognito user pools for enterprise SSO and multi-factor auth. I configured custom user role claims encrypted inside JWT tokens, which are parsed and validated at the edge using Next.js middleware, blocking unauthorized route rendering before it hits the backend.",
-        impact: "Secured administrative dashboards with automated audit logs and fine-grained visual controls, reducing unauthorized API attempts to zero."
-      }
-    ]
+        problem:
+          "Enterprise property transactions require strict permission controls; client-side route guards were vulnerable and repetitive database permission queries slowed dashboards.",
+        solution:
+          "Integrated AWS Cognito user pools with encrypted custom role claims inside JWT tokens. Edge middleware in Next.js verifies token claims before page hydration, preventing unauthorized route rendering.",
+        impact:
+          "Zero unauthorized API or route requests and sub-second dashboard rendering across extensive property records.",
+      },
+    ],
   },
 ];
-
-// Expanded track array for infinite non-rewinding CarouselView looping
-const REPEAT_COUNT = 5;
-const EXPANDED_PROJECTS = Array.from({ length: REPEAT_COUNT }).flatMap(() => PROJECTS);
-const MID_OFFSET = Math.floor(REPEAT_COUNT / 2) * PROJECTS.length; // 10
 
 interface ProjectsProps {
   onColorChange?: (color: string) => void;
 }
 
 export default function Projects({ onColorChange }: ProjectsProps) {
-  // Virtual continuous slide index starting in the middle set (10)
-  const [virtualIndex, setVirtualIndex] = useState(MID_OFFSET);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
+  const [expandedCases, setExpandedCases] = useState<Record<string, boolean>>({});
 
-  // Active project index (0 to 4)
-  const currentIndex = ((virtualIndex % PROJECTS.length) + PROJECTS.length) % PROJECTS.length;
-  const activeProject = PROJECTS[currentIndex];
-  const containerRef = useRef<HTMLDivElement>(null);
+  const toggleCase = (projectId: string) => {
+    setExpandedCases((prev) => ({
+      ...prev,
+      [projectId]: !prev[projectId],
+    }));
+  };
 
-  // Notify parent component about active project color
-  useEffect(() => {
-    if (onColorChange) {
-      onColorChange(activeProject.color);
+  const getLinkIcon = (type: ProjectLink["iconType"]) => {
+    switch (type) {
+      case "web":
+        return <Globe className="w-3.5 h-3.5" />;
+      case "ios":
+        return <Apple className="w-3.5 h-3.5" />;
+      case "android":
+        return <Smartphone className="w-3.5 h-3.5" />;
+      default:
+        return <ExternalLink className="w-3.5 h-3.5" />;
     }
-  }, [currentIndex, onColorChange, activeProject.color]);
-
-  const navigateVirtual = (newVirtualIndex: number) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setVirtualIndex(newVirtualIndex);
-
-    // After animation completes, silently re-center virtualIndex to prevent infinite bounds
-    setTimeout(() => {
-      setIsTransitioning(false);
-      const targetProjIndex = ((newVirtualIndex % PROJECTS.length) + PROJECTS.length) % PROJECTS.length;
-      const normalizedVirtualIndex = MID_OFFSET + targetProjIndex;
-
-      if (newVirtualIndex !== normalizedVirtualIndex) {
-        setIsResetting(true);
-        setVirtualIndex(normalizedVirtualIndex);
-        // Turn transition back on after 1 frame
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setIsResetting(false);
-          });
-        });
-      }
-    }, 600);
   };
-
-  const handlePrev = () => {
-    navigateVirtual(virtualIndex - 1);
-  };
-
-  const handleNext = () => {
-    navigateVirtual(virtualIndex + 1);
-  };
-
-  const jumpToProject = (targetIndex: number) => {
-    if (isTransitioning) return;
-    const diff = targetIndex - currentIndex;
-    navigateVirtual(virtualIndex + diff);
-  };
-
-  // Math for CarouselView track centering (80% step per item)
-  // Formula: 10% - (virtualIndex * 80%)
-  const trackOffset = 10 - virtualIndex * 80;
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full relative py-6 max-w-6xl mx-auto overflow-x-clip"
-    >
-      {/* 1. Horizontal jump-tabs navigation */}
-      <div className="flex flex-wrap gap-2.5 mb-8 justify-center border-b border-border/20 pb-4">
-        {PROJECTS.map((project, index) => (
-          <button
-            key={project.title}
-            onClick={() => jumpToProject(index)}
-            className={`px-4.5 py-2.5 text-xs md:text-sm font-semibold rounded-xl transition-all cursor-pointer ${
-              currentIndex === index
-                ? "bg-accent text-accent-foreground shadow-sm"
-                : "bg-muted/10 hover:bg-muted/20 text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {project.title}
-          </button>
-        ))}
-      </div>
+    <div className="w-full relative py-2 max-w-6xl mx-auto">
+      {/* Vertical Grid of Projects (2 in a row on md/lg screens) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {PROJECTS.map((project) => {
+          const isExpanded = !!expandedCases[project.id];
 
-      {/* 2. Main CarouselView Viewport Stage */}
-      <div className="relative w-full min-h-[560px] md:min-h-[620px] flex items-center justify-center my-4 overflow-hidden">
-        {/* Floating Left Navigation Arrow */}
-        <button
-          onClick={handlePrev}
-          disabled={isTransitioning}
-          className="absolute left-2 md:left-4 z-40 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-border bg-background/90 hover:bg-background text-foreground hover:text-accent shadow-lg hover:scale-110 transition-all cursor-pointer disabled:opacity-40"
-          aria-label="Previous project"
-        >
-          <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
-        </button>
-
-        {/* CarouselView Infinite Track */}
-        <div
-          className={`flex items-center w-full ${
-            isResetting ? "transition-none" : "transition-transform duration-600 ease-[cubic-bezier(0.2,0,0,1)]"
-          }`}
-          style={{
-            transform: `translateX(${trackOffset}%)`,
-          }}
-        >
-          {EXPANDED_PROJECTS.map((project, index) => {
-            const isActive = index === virtualIndex;
-
-            return (
+          return (
+            <article
+              key={project.id}
+              onMouseEnter={() => onColorChange?.(project.color)}
+              className="group relative rounded-3xl border border-border/60 bg-card/85 dark:bg-card/90 backdrop-blur-xl p-6 sm:p-7 shadow-md hover:shadow-2xl hover:border-accent/50 transition-all duration-300 flex flex-col justify-between h-full"
+              style={{
+                "--project-accent": project.color,
+              } as React.CSSProperties}
+            >
+              {/* Top Accent Strip */}
               <div
-                key={`${project.title}-${index}`}
-                onClick={() => !isActive && !isTransitioning && navigateVirtual(index)}
-                className={`flex-shrink-0 w-[76%] mx-[2%] p-6 md:p-10 rounded-3xl transition-all duration-600 ease-[cubic-bezier(0.2,0,0,1)] select-none ${
-                  isActive
-                    ? "opacity-100 border border-accent/40 bg-card/90 dark:bg-card/95 backdrop-blur-xl shadow-2xl scale-100 cursor-default z-30"
-                    : "opacity-40 border border-border/20 bg-card/40 backdrop-blur-md shadow-md scale-[0.92] cursor-pointer hover:opacity-65 z-10"
-                }`}
-              >
-                {/* Card Header (Title, Logo, Badges & Links) */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/20 mb-6">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-accent/10 text-accent">
-                        {project.category}
-                      </span>
-                      <span className="text-xs text-muted-foreground font-medium">
-                        {project.platform}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      {project.logo ? (
-                        <img
-                          src={project.logo}
-                          alt={project.title}
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl object-cover border border-border/50 shadow-sm"
-                        />
-                      ) : (
-                        <div
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center font-bold text-accent text-xl shadow-sm"
-                          style={{ background: `${project.color}20`, color: project.color }}
-                        >
-                          {project.title[0]}
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="text-2xl md:text-4xl font-extrabold text-foreground tracking-tight">
-                          {project.title}
-                        </h3>
-                        <p className="text-sm md:text-base text-muted-foreground mt-0.5">
-                          {project.description}
-                        </p>
+                className="absolute top-0 left-6 right-6 h-1 rounded-b-full opacity-60 group-hover:opacity-100 transition-opacity"
+                style={{ backgroundColor: project.color }}
+              />
+
+              <div className="space-y-4">
+                {/* Card Header: Icon, Titles & Badges */}
+                <div className="flex items-start justify-between gap-3 pb-4 border-b border-border/30">
+                  <div className="flex items-start gap-3.5">
+                    {/* Project Logo / Monogram */}
+                    {project.logo ? (
+                      <img
+                        src={project.logo}
+                        alt={project.title}
+                        className="w-12 h-12 rounded-2xl object-cover border border-border shadow-xs flex-shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-xl shadow-xs flex-shrink-0"
+                        style={{
+                          backgroundColor: `${project.color}20`,
+                          color: project.color,
+                          border: `1px solid ${project.color}40`,
+                        }}
+                      >
+                        {project.title.charAt(0)}
                       </div>
+                    )}
+
+                    <div className="space-y-1">
+                      {/* Badges */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor: `${project.color}18`,
+                            color: project.color,
+                          }}
+                        >
+                          {project.categoryLabel}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-medium px-2 py-0.5 rounded-md bg-muted/10 border border-border/40">
+                          {project.platform}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+                        {project.title}
+                      </h3>
                     </div>
                   </div>
+                </div>
 
-                  {/* External Links */}
-                  {project.links.length > 0 && (
-                    <div className="flex flex-wrap gap-2.5 self-start sm:self-auto">
-                      {project.links.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl border border-border bg-background text-xs font-bold text-accent hover:bg-accent/5 transition-colors shadow-sm"
+                {/* Tagline */}
+                <p className="text-xs sm:text-sm text-foreground/80 font-medium">
+                  {project.tagline}
+                </p>
+
+                {/* External Action Links */}
+                {project.links.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {project.links.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-background/90 text-xs font-semibold text-foreground hover:text-accent hover:border-accent hover:bg-accent/5 transition-all shadow-xs"
+                      >
+                        {getLinkIcon(link.iconType)}
+                        <span>{link.label}</span>
+                        <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                {/* Summary Overview */}
+                <div className="p-3.5 rounded-xl bg-muted/5 border border-border/40 flex items-start gap-2.5 text-xs sm:text-sm text-foreground/85 leading-relaxed">
+                  <Info
+                    className="w-4 h-4 flex-shrink-0 mt-0.5"
+                    style={{ color: project.color }}
+                  />
+                  <p>{project.summary}</p>
+                </div>
+
+                {/* Highlight Metrics Chips */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {project.metrics.map((metric, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-background border border-border/60 shadow-xs"
+                      style={{ color: project.color }}
+                    >
+                      <CheckCircle2 className="w-3 h-3" />
+                      {metric}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Engineering Deep-Dive Section (Collapsible) */}
+                <div className="border-t border-border/30 pt-3">
+                  <button
+                    onClick={() => toggleCase(project.id)}
+                    className="w-full flex items-center justify-between py-1 text-left cursor-pointer group/btn"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles
+                        className="w-3.5 h-3.5"
+                        style={{ color: project.color }}
+                      />
+                      <span className="text-xs font-bold uppercase tracking-wider text-foreground group-hover/btn:text-accent transition-colors">
+                        Engineering Deep Dive ({project.cases.length})
+                      </span>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted-foreground group-hover/btn:text-foreground">
+                      {isExpanded ? "Collapse" : "Explore"}
+                      {isExpanded ? (
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      ) : (
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      )}
+                    </span>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="mt-3 space-y-4 pt-1 animate-fade-in">
+                      {project.cases.map((c, cIdx) => (
+                        <div
+                          key={cIdx}
+                          className="p-3.5 rounded-xl bg-background/50 border border-border/50 space-y-2.5"
                         >
-                          {link.icon}
-                          {link.label}
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
+                          {/* Problem */}
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                              Challenge
+                            </span>
+                            <h4 className="text-xs sm:text-sm font-bold text-foreground leading-snug">
+                              {c.problem}
+                            </h4>
+                          </div>
+
+                          {/* Technical Solution */}
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                              <Lightbulb className="w-3 h-3" />
+                              Solution
+                            </span>
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                              {c.solution}
+                            </p>
+                          </div>
+
+                          {/* Impact */}
+                          <div className="space-y-0.5 pt-1 border-t border-border/20">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              <TrendingUp className="w-3 h-3" />
+                              Result
+                            </span>
+                            <p className="text-xs text-foreground/90 font-semibold leading-relaxed">
+                              {c.impact}
+                            </p>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
                 </div>
-
-                {/* Dedicated Project Overview Callout */}
-                <div className="mb-6 p-4 rounded-2xl bg-accent/5 border-l-4 border-accent/70 flex items-start gap-3">
-                  <Info className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-accent mb-0.5 block">
-                      Project Overview & Summary
-                    </span>
-                    <p className="text-sm md:text-base font-medium text-foreground leading-relaxed">
-                      {project.summary}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Case Studies Content */}
-                <div className="space-y-8 max-h-[340px] md:max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {project.cases.map((c, cIndex) => (
-                    <div
-                      key={cIndex}
-                      className="flex flex-col gap-4 border-b border-border/10 pb-6 last:border-b-0 last:pb-0"
-                    >
-                      {/* Challenge Headline */}
-                      <div className="flex flex-col gap-1">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
-                          The Challenge & Context
-                        </span>
-                        <h4 className="text-xl md:text-2xl font-extrabold text-foreground leading-snug tracking-tight">
-                          {c.problem}
-                        </h4>
-                      </div>
-
-                      {/* Solution & Impact Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                        <div className="md:col-span-7 flex flex-col gap-1">
-                          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-500 flex items-center gap-1.5">
-                            <Lightbulb className="w-3.5 h-3.5" />
-                            Engineering Solution
-                          </span>
-                          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                            {c.solution}
-                          </p>
-                        </div>
-                        <div className="md:col-span-5 flex flex-col gap-1">
-                          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5">
-                            <TrendingUp className="w-3.5 h-3.5" />
-                            Impact & Metrics
-                          </span>
-                          <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-bold">
-                            {c.impact}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tech Stack Pills */}
-                <div className="mt-6 pt-4 border-t border-border/20 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold text-muted uppercase tracking-wider mr-2">Technologies Used:</span>
-                  {project.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="px-3 py-1 rounded-xl bg-muted/10 text-xs font-semibold text-muted border border-border/10 shadow-sm"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
               </div>
-            );
-          })}
-        </div>
 
-        {/* Floating Right Navigation Arrow */}
-        <button
-          onClick={handleNext}
-          disabled={isTransitioning}
-          className="absolute right-2 md:right-4 z-40 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-border bg-background/90 hover:bg-background text-foreground hover:text-accent shadow-lg hover:scale-110 transition-all cursor-pointer disabled:opacity-40"
-          aria-label="Next project"
-        >
-          <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
-        </button>
-      </div>
-
-      {/* 3. Slide Indicators */}
-      <div className="flex items-center justify-center gap-2 mt-6">
-        {PROJECTS.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => jumpToProject(index)}
-            className={`h-2.5 rounded-full transition-all cursor-pointer ${
-              currentIndex === index ? "w-10 bg-accent" : "w-2.5 bg-muted/40 hover:bg-muted/60"
-            }`}
-            aria-label={`Go to project ${index + 1}`}
-          />
-        ))}
-        <span className="text-xs md:text-sm text-muted-foreground font-semibold ml-2">
-          {currentIndex + 1} of {PROJECTS.length}
-        </span>
+              {/* Technologies Used Pills */}
+              <div className="mt-5 pt-3 border-t border-border/20 flex flex-wrap items-center gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mr-1.5 flex items-center gap-1">
+                  <Layers className="w-3 h-3" />
+                  Tech:
+                </span>
+                {project.tech.map((t) => (
+                  <span
+                    key={t}
+                    className="px-2 py-0.5 rounded-md bg-muted/10 text-[11px] font-medium text-foreground/80 border border-border/30 hover:border-accent/40 transition-colors"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </article>
+          );
+        })}
       </div>
     </div>
   );
